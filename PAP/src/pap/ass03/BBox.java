@@ -7,12 +7,8 @@ public class BBox {
 	
 	private P2d upperLeft,bottomRight;
 	
-	/**
-<<<<<<< HEAD
-	 * Build a bbox 123
-=======
+	/*
 	 * Build a bbox 
->>>>>>> refs/remotes/origin/master
 	 * 
 	 * @param upperLeft -- upper left-corner
 	 * @param bottomRight -- bottom-right corner
