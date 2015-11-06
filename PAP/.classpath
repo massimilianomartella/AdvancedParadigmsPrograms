@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/Java SE 8 [1.8.0]"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="/Users/max/git/AdvancedParadigmsPrograms/PAP/lib/akka/akka-actor_2.11-2.3.3.jar"/>
 	<classpathentry kind="lib" path="/Users/max/git/AdvancedParadigmsPrograms/PAP/lib/akka/akka-kernel_2.11-2.3.3.jar"/>
 	<classpathentry kind="lib" path="/Users/max/git/AdvancedParadigmsPrograms/PAP/lib/akka/config-1.2.1.jar"/>
@@ -15,5 +16,20 @@
 	<classpathentry kind="lib" path="/Users/max/git/AdvancedParadigmsPrograms/PAP/lib/rxjava/rxjava-reactive-streams-1.0.0.jar"/>
 	<classpathentry kind="lib" path="/Users/max/git/AdvancedParadigmsPrograms/PAP/lib/rxjava/rxjava-string-0.22.0.jar"/>
 	<classpathentry kind="lib" path="/Users/max/git/AdvancedParadigmsPrograms/PAP/src/pap/ass05/vecmath-1.3.1.jar"/>
+=======
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/akka/akka-actor_2.11-2.3.3.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/akka/akka-kernel_2.11-2.3.3.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/akka/config-1.2.1.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/akka/scala-library-2.11.1.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/rxjava/rxjava-1.0.11.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/rxjava/rxjava-async-util-0.21.0.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/rxjava/rxjava-computation-expressions-0.21.0.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/rxjava/rxjava-guava-0.2.0.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/rxjava/rxjava-joins-0.22.0.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/rxjava/rxjava-math-1.0.0.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/rxjava/rxjava-reactive-streams-1.0.0.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/lib/rxjava/rxjava-string-0.22.0.jar"/>
+	<classpathentry kind="lib" path="/Users/max/Documents/workspace/PAP/src/pap/ass05/vecmath-1.3.1.jar"/>
+>>>>>>> refs/remotes/origin/master
 	<classpathentry kind="output" path="bin"/>
 </classpath>
