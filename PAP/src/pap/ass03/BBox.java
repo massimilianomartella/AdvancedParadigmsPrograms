@@ -8,7 +8,7 @@ public class BBox {
 	private P2d upperLeft,bottomRight;
 	
 	/**
-	 * Build a bbox 
+	 * Build a bbox 123
 	 * 
 	 * @param upperLeft -- upper left-corner
 	 * @param bottomRight -- bottom-right corner
