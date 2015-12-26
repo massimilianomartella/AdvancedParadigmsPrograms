@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="lib/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="lib/rxjava-1.0.11.jar"/>
+	<classpathentry kind="lib" path="lib/rxjava-async-util-0.21.0.jar"/>
+	<classpathentry kind="lib" path="lib/rxjava-computation-expressions-0.21.0.jar"/>
+	<classpathentry kind="lib" path="lib/rxjava-guava-0.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/rxjava-joins-0.22.0.jar"/>
+	<classpathentry kind="lib" path="lib/rxjava-math-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/rxjava-reactive-streams-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/rxjava-string-0.22.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
