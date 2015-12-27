@@ -7,6 +7,7 @@ import rx.Subscriber;
 import rx.observables.ConnectableObservable;
 
 import com.IoT.Arduino.sensors.DataDht11;
+import com.IoT.thingSpeak.ThingSpeakWebClient;
 
 public class ModelReactiveControlSensor extends Thread {
 	private DataDht11 dht11;
@@ -16,11 +17,16 @@ public class ModelReactiveControlSensor extends Thread {
 	private double thresholdTemperatureError, thresholdHumidityError;
 	private int frequencyTemperature, frequencyHumidity;
 	private double temperatureRange, humidityRange;
+	private ThingSpeakWebClient ts;
 
 	public ModelReactiveControlSensor(double temperatureRange,
 			int frequencyTemperature, double humidityRange,
 			int frequencyHumidity, StopFlag flag, SensorsView view,
-			MonitorFlag monitorTemperature, MonitorFlag monitorHumidity, DataDht11 dht11) {
+			MonitorFlag monitorTemperature, MonitorFlag monitorHumidity,
+			DataDht11 dht11) {
+		
+		ts = new ThingSpeakWebClient();
+		
 		this.monitorTemperature = monitorTemperature;
 		this.monitorHumidity = monitorHumidity;
 		this.flag = flag;
@@ -55,9 +61,11 @@ public class ModelReactiveControlSensor extends Thread {
 		// Sensor connection by calling the function that identifies
 		// getSpikeValue spikes for each sensor.
 		ConnectableObservable<Double> connectObsHumidity = getSpikeValue(
-				observableHumidity, "Humidity", humidityRange, thresholdHumidityError).publish();
+				observableHumidity, "Humidity", humidityRange,
+				thresholdHumidityError).publish();
 		ConnectableObservable<Double> connectObsTemperature = getSpikeValue(
-				observableTemperature, "Temperature", temperatureRange, thresholdTemperatureError).publish();
+				observableTemperature, "Temperature", temperatureRange,
+				thresholdTemperatureError).publish();
 
 		connectObsTemperature
 				.subscribe((Double v) -> {
@@ -75,19 +83,24 @@ public class ModelReactiveControlSensor extends Thread {
 							view.setUpdatedMinMaxValueTemperature(
 									monitorTemperature.getMinValue(),
 									monitorTemperature.getMaxValue());
-							view.setUpdatedJPaneAreaTemperature("Temperature > " + v
-									+ "\n", Color.black);
+							view.setUpdatedJPaneAreaTemperature(
+									"Temperature > " + v + "\n", Color.black);
 							// System.out.println("Media: " + v + "\n\n");
+							
+							
+								
+							
+							
 						}
 					}, (Throwable t) -> {
 						System.out.println("error  " + t);
 					}, () -> {
 						// When finish, write "Completed" on the JPanelArea
-						view.setUpdatedJPaneAreaTemperature("Completed\n", Color.gray);
+						view.setUpdatedJPaneAreaTemperature("Completed\n",
+								Color.gray);
 					});
-		
-		connectObsHumidity
-		.subscribe((Double v) -> {
+
+		connectObsHumidity.subscribe((Double v) -> {
 			// If the value is out of range
 				if ((v) < (humidityRange - thresholdHumidityError)
 						| (v) > (humidityRange + thresholdHumidityError)) {
@@ -102,9 +115,15 @@ public class ModelReactiveControlSensor extends Thread {
 					view.setUpdatedMinMaxValueHumidity(
 							monitorHumidity.getMinValue(),
 							monitorHumidity.getMaxValue());
-					view.setUpdatedJPaneAreaHumidity("Humidity > " + v
-							+ "\n", Color.black);
+					view.setUpdatedJPaneAreaHumidity("Humidity > " + v + "\n",
+							Color.black);
 					// System.out.println("Media: " + v + "\n\n");
+					
+					
+//						ts.sendMsg(2, v);	//channel 2 for Humidity
+				
+					
+					
 				}
 			}, (Throwable t) -> {
 				System.out.println("error  " + t);
@@ -119,8 +138,8 @@ public class ModelReactiveControlSensor extends Thread {
 
 	}
 
-	Observable<Double> getSpikeValue(Observable<Double> stream,
-			String sensor, double temperatureRange, double thresholdTemperatureError) {
+	Observable<Double> getSpikeValue(Observable<Double> stream, String sensor,
+			double temperatureRange, double thresholdTemperatureError) {
 		return stream
 				.filter((Double v) -> {
 					if (v > (temperatureRange - thresholdTemperatureError)

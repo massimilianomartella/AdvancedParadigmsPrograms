@@ -20,7 +20,7 @@ public class Controller implements InputListener {
 		dht11 = new DataDht11();
 
 		this.tempSensor = new Sensors(dht11);
-		tempSensor.initialize();// faccio partire il monitoraggio
+		tempSensor.initialize();// start monitoring
 
 	}
 
@@ -38,5 +38,10 @@ public class Controller implements InputListener {
 	@Override
 	public void stopped() {
 		flag.setDone();
+	}
+
+	@Override
+	public void clientThingSpeak() {
+		// TODO
 	}
 }

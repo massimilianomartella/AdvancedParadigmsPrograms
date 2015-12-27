@@ -38,6 +38,7 @@ public class SensorsView extends JFrame implements ActionListener {
 	private ArrayList<InputListener> listeners;
 	private JButton startButton;
 	private JButton stopButton;
+	private JButton thingSpeak;
 	private JTextField maxValueTemperature, minValueTemperature,
 			maxValueHumidity, minValueHumidity;
 	private JTextField temperatureRange, humidityRange, frequencyTemperature,
@@ -57,6 +58,7 @@ public class SensorsView extends JFrame implements ActionListener {
 		listeners = new ArrayList<InputListener>();
 		startButton = new JButton("start");
 		stopButton = new JButton("stop");
+		thingSpeak = new JButton("ThingSpeak");
 
 		stopButton.setEnabled(false);
 
@@ -79,6 +81,7 @@ public class SensorsView extends JFrame implements ActionListener {
 		JPanel controlPanel = new JPanel();
 		controlPanel.add(startButton);
 		controlPanel.add(stopButton);
+		controlPanel.add(thingSpeak);
 		controlPanel.add(new JLabel("Temperature Range"));
 		controlPanel.add(temperatureRange);
 		controlPanel.add(new JLabel("Frequency Temperature"));
@@ -125,25 +128,24 @@ public class SensorsView extends JFrame implements ActionListener {
 		minValueTemperature = new JTextField(5);
 		minValueTemperature.setText("Ready...");
 		minValueTemperature.setEditable(false);
-		
+
 		maxValueHumidity = new JTextField(5);
 		maxValueHumidity.setText("Ready...");
 		maxValueHumidity.setEditable(false);
 		minValueHumidity = new JTextField(5);
 		minValueHumidity.setText("Ready...");
 		minValueHumidity.setEditable(false);
-		
-		
+
 		infoPanel.add(new JLabel("Max Temperature"));
 		infoPanel.add(maxValueTemperature);
 		infoPanel.add(new JLabel("Min Temperature"));
 		infoPanel.add(minValueTemperature);
-		
+
 		infoPanel.add(new JLabel("Max Humidity"));
 		infoPanel.add(maxValueHumidity);
 		infoPanel.add(new JLabel("Min Humidity"));
 		infoPanel.add(minValueHumidity);
-		
+
 		JPanel cp = new JPanel();
 		LayoutManager layout = new BorderLayout();
 		cp.setLayout(layout);
@@ -155,6 +157,7 @@ public class SensorsView extends JFrame implements ActionListener {
 
 		startButton.addActionListener(this);
 		stopButton.addActionListener(this);
+		thingSpeak.addActionListener(this);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setLocationRelativeTo(null);
@@ -188,6 +191,8 @@ public class SensorsView extends JFrame implements ActionListener {
 			temperatureRange.setEnabled(true);
 			frequencyHumidity.setEnabled(true);
 			humidityRange.setEnabled(true);
+		} else if (cmd.equals("thinkSpeak")) {
+
 		}
 	}
 
@@ -203,6 +208,12 @@ public class SensorsView extends JFrame implements ActionListener {
 	private void notifyStopped() {
 		for (InputListener l : listeners) {
 			l.stopped();
+		}
+	}
+
+	private void notifyClientThingSpeak() {
+		for (InputListener l : listeners) {
+			l.clientThingSpeak();
 		}
 	}
 
@@ -252,7 +263,8 @@ public class SensorsView extends JFrame implements ActionListener {
 		}
 	}
 
-	public void setUpdatedMinMaxValueTemperature(final Double valMin, final Double valMax) {
+	public void setUpdatedMinMaxValueTemperature(final Double valMin,
+			final Double valMax) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
@@ -265,7 +277,8 @@ public class SensorsView extends JFrame implements ActionListener {
 		}
 	}
 
-	public void setUpdatedMinMaxValueHumidity(final Double valMin, final Double valMax) {
+	public void setUpdatedMinMaxValueHumidity(final Double valMin,
+			final Double valMax) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {

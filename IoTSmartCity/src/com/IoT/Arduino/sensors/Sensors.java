@@ -56,7 +56,7 @@ public class Sensors implements SerialPortEventListener {
 		// gets us into the while loop and was suggested here was suggested
 		// http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
 		System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/tty.usbmodem1411");
-		
+
 		CommPortIdentifier portId = null;
 		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
 
@@ -116,10 +116,10 @@ public class Sensors implements SerialPortEventListener {
 		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 			try {
 				String inputLine = input.readLine();
-				System.out.println("InputLine: "+inputLine);
-				
+				System.out.println("InputLine: " + inputLine);
+
 				getCurrentValue(inputLine);
-				
+
 			} catch (Exception e) {
 				System.err.println(e.toString());
 			}
@@ -130,41 +130,52 @@ public class Sensors implements SerialPortEventListener {
 
 	public void getCurrentValue(String inputLine) {
 		JSONParser parser = new JSONParser();
-		ContainerFactory containerFactory = new ContainerFactory(){
-		    public List creatArrayContainer() {
-		      return new LinkedList();
-		    }
+		ContainerFactory containerFactory = new ContainerFactory() {
+			public List creatArrayContainer() {
+				return new LinkedList();
+			}
 
-		    public Map createObjectContainer() {
-		      return new LinkedHashMap();
-		    }
-		                        
-		  };
-		  try{
-			    Map json = (Map)parser.parse(inputLine, containerFactory);
-			    Iterator iter = json.entrySet().iterator();
-			    //System.out.println("==iterate result==");
-			    while(iter.hasNext()){
-			      Map.Entry entry = (Map.Entry)iter.next();
-//			      System.out.println(entry.getKey() + "=>" + entry.getValue());
-			      if(entry.getKey().toString().equals("value") && entry.getValue().toString().equals("OK")) {
-			    	  Map.Entry nextEntry = (Map.Entry)iter.next();
-			    	  //System.out.println(nextEntry.getValue());
-			    	  String[] c = nextEntry.getValue().toString().replaceAll(" ", "").split(",");
-			    	  String humidity = c[0].replaceAll("\\D+","");	//regular expression for extract the number
-			    	  String temperature = c[1].replaceAll("\\D+","");	//regular expression for extract the number
-			    	  
-			    	  sensor.setHumidity(Double.parseDouble(humidity));
-			    	  sensor.setTemperature(Double.parseDouble(temperature));			    	  
-			      }
-			    }
-			                        
-//			    System.out.println("==toJSONString()==");
-//			    System.out.println(JSONValue.toJSONString(json));
-			  }
-			  catch(ParseException pe){
-			    System.out.println(pe);
-			  }
+			public Map createObjectContainer() {
+				return new LinkedHashMap();
+			}
+
+		};
+		try {
+			Map json = (Map) parser.parse(inputLine, containerFactory);
+			Iterator iter = json.entrySet().iterator();
+			// System.out.println("==iterate result==");
+			while (iter.hasNext()) {
+				Map.Entry entry = (Map.Entry) iter.next();
+				// System.out.println(entry.getKey() + "=>" + entry.getValue());
+				if (entry.getKey().toString().equals("value")
+						&& entry.getValue().toString().equals("OK")) {
+					Map.Entry nextEntry = (Map.Entry) iter.next();
+					// System.out.println(nextEntry.getValue());
+					String[] c = nextEntry.getValue().toString()
+							.replaceAll(" ", "").split(",");
+					String humidity = c[0].replaceAll("\\D+", ""); // regular
+																	// expression
+																	// for
+																	// extract
+																	// the
+																	// number
+					String temperature = c[1].replaceAll("\\D+", ""); // regular
+																		// expression
+																		// for
+																		// extract
+																		// the
+																		// number
+
+					sensor.setHumidity(Double.parseDouble(humidity));
+					sensor.setTemperature(Double.parseDouble(temperature));
+				}
+			}
+
+			// System.out.println("==toJSONString()==");
+			// System.out.println(JSONValue.toJSONString(json));
+		} catch (ParseException pe) {
+			System.out.println(pe);
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -172,21 +183,19 @@ public class Sensors implements SerialPortEventListener {
 		Sensors main = new Sensors(dht11);
 		main.initialize();
 
-//		Thread t = new Thread() {
-//			public void run() {
-//				// the following line will keep this app alive for 1000 seconds,
-//				// waiting for events to occur and responding to them (printing
-//				// incoming messages to console).
-//				try {
-//					Thread.sleep(10000);
-//				} catch (InterruptedException ie) {
-//				}
-//			}
-//		};
-//		t.start();
+		// Thread t = new Thread() {
+		// public void run() {
+		// // the following line will keep this app alive for 1000 seconds,
+		// // waiting for events to occur and responding to them (printing
+		// // incoming messages to console).
+		// try {
+		// Thread.sleep(10000);
+		// } catch (InterruptedException ie) {
+		// }
+		// }
+		// };
+		// t.start();
 		System.out.println("Started");
-		
-		
-		
+
 	}
 }

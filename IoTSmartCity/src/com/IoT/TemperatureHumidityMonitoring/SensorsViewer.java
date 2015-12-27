@@ -13,9 +13,7 @@ public class SensorsViewer {
 	static private void loading() {
 		final SwingProgressBar it = new SwingProgressBar();
 		JFrame frame = new JFrame("Progress Bar Example");
-		
-		
-		
+
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(it);
 		frame.pack();
@@ -37,7 +35,7 @@ public class SensorsViewer {
 		}
 		frame.setVisible(false);
 	}
-	
+
 	public static void main(String[] args) {
 
 		MonitorFlag monitorTemp = new MonitorFlag();
@@ -50,7 +48,7 @@ public class SensorsViewer {
 
 		view.addListener(controller);
 
-		//loading();
+		// loading();
 		view.setVisible(true);
 	}
 

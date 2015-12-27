@@ -7,6 +7,7 @@ import rx.Subscriber;
 
 /**
  * Thread che fa partire la rilevazione al sensore desiderato
+ * 
  * @author Martella Massimiliano
  *
  */

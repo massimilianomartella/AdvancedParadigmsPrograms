@@ -7,7 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 /**
  *
  */
-public class TempSensor {	
+public class TempSensor {
 	private volatile double currentValue;
 	private double min, max, spikeFreq;
 	private Random gen;
@@ -17,52 +17,59 @@ public class TempSensor {
 	private double spikeVar;
 	private UpdateTask updateTask;
 	private ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
-	
+
 	/**
-	 * Create a sensor producing values in a (min,max) range, with possible spikes
+	 * Create a sensor producing values in a (min,max) range, with possible
+	 * spikes
 	 * 
-	 * @param min range min
-	 * @param max range max
-	 * @param spikeFreq - probability to read a spike (0 = no spikes, 1 = always spikes)
+	 * @param min
+	 *            range min
+	 * @param max
+	 *            range max
+	 * @param spikeFreq
+	 *            - probability to read a spike (0 = no spikes, 1 = always
+	 *            spikes)
 	 */
-	public TempSensor(double min, double max, double spikeFreq){
+	public TempSensor(double min, double max, double spikeFreq) {
 		gen = new Random(System.nanoTime());
 		time = BaseTimeValue.getInstance();
-		zero = (max + min)*0.5;
-		range = (max - min)*0.5;
-		this.spikeFreq = spikeFreq; 
-		spikeVar = range*10;
+		zero = (max + min) * 0.5;
+		range = (max - min) * 0.5;
+		this.spikeFreq = spikeFreq;
+		spikeVar = range * 10;
 		updateTask = new UpdateTask();
-		exec.scheduleAtFixedRate(updateTask, 0, 100, java.util.concurrent.TimeUnit.MILLISECONDS);
+		exec.scheduleAtFixedRate(updateTask, 0, 100,
+				java.util.concurrent.TimeUnit.MILLISECONDS);
 
 		/* initialize currentValue */
 		updateTask.run();
 	}
-	
+
 	/**
-	 * Reading the current sensor value 
+	 * Reading the current sensor value
 	 * 
 	 * @return sensor value
 	 */
-	public double getCurrentValue(){
-		synchronized (updateTask){
+	public double getCurrentValue() {
+		synchronized (updateTask) {
 			return currentValue;
 		}
 	}
-	
+
 	class UpdateTask implements Runnable {
-		public void run(){
+		public void run() {
 			double newValue;
 
-			double delta = (-0.5 + gen.nextDouble())*range*0.2;
-			newValue = zero + Math.sin(time.getCurrentValue())*range*0.8 + delta;
+			double delta = (-0.5 + gen.nextDouble()) * range * 0.2;
+			newValue = zero + Math.sin(time.getCurrentValue()) * range * 0.8
+					+ delta;
 
 			boolean newSpike = gen.nextDouble() <= spikeFreq;
-			if (newSpike){
+			if (newSpike) {
 				newValue = currentValue + spikeVar;
 			}
 
-			synchronized (this){
+			synchronized (this) {
 				currentValue = newValue;
 			}
 		}
@@ -71,31 +78,31 @@ public class TempSensor {
 
 class BaseTimeValue {
 	static BaseTimeValue instance;
+
 	static BaseTimeValue getInstance() {
-		synchronized (BaseTimeValue.class){
-			if (instance == null){
+		synchronized (BaseTimeValue.class) {
+			if (instance == null) {
 				instance = new BaseTimeValue();
 			}
 			return instance;
 		}
 	}
-	
+
 	private double time;
 	private ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
 
-	private BaseTimeValue(){
+	private BaseTimeValue() {
 		time = 0;
 		exec.scheduleAtFixedRate(() -> {
-			synchronized (exec){
+			synchronized (exec) {
 				time += 0.01;
 			}
 		}, 0, 100, java.util.concurrent.TimeUnit.MILLISECONDS);
 	}
-	
-	public double getCurrentValue(){
-		synchronized (exec){
+
+	public double getCurrentValue() {
+		synchronized (exec) {
 			return time;
 		}
 	}
 }
-
