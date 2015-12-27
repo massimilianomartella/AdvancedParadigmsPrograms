@@ -1,5 +1,8 @@
 package pap.ass08.TemperatureMonitoring;
 
+import com.Arduino.sensors.DataDht11;
+import com.Arduino.sensors.Sensors;
+
 import rx.Subscriber;
 
 /**
@@ -7,17 +10,15 @@ import rx.Subscriber;
  * @author Martella Massimiliano
  *
  */
-public class ObservableTempStream extends Thread {
+public class ObservableHumidityStream extends Thread {
 
-	private TempSensor sensor;
-	private int intervallo;
+	private DataDht11 sensor;
 	private Subscriber<? super Double> subscriber;
 	private StopFlag flag;
 
-	public ObservableTempStream(Subscriber<? super Double> subscriber,
-			TempSensor sensor, int intervallo, StopFlag flag) {
+	public ObservableHumidityStream(Subscriber<? super Double> subscriber,
+			DataDht11 sensor, StopFlag flag) {
 		this.sensor = sensor;
-		this.intervallo = intervallo;
 		this.subscriber = subscriber;
 		this.flag = flag;
 	}
@@ -29,8 +30,8 @@ public class ObservableTempStream extends Thread {
 		// while(true)
 		while (true) {
 			try {
-				subscriber.onNext(sensor.getCurrentValue());
-				Thread.sleep(intervallo);
+				subscriber.onNext(sensor.getHumidity());
+				//Thread.sleep(intervallo);
 			} catch (Exception e) {
 				subscriber.onError(e);
 			} finally {

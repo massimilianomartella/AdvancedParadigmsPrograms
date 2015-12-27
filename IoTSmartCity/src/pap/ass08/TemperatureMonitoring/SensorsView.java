@@ -32,7 +32,7 @@ public class SensorsView extends JFrame implements ActionListener {
 	private JButton startButton;
 	private JButton stopButton;
 	private JTextField maxValue, minValue;
-	private JTextField milliSeconds, threshold;
+	private JTextField avarage, threshold;
 	
 	
 	private JTextPane tPane;
@@ -52,9 +52,9 @@ public class SensorsView extends JFrame implements ActionListener {
 		
 		stopButton.setEnabled(false);
 		
-		milliSeconds = new JTextField(5);
-		milliSeconds.setText("500");
-		milliSeconds.setEditable(true);
+		avarage = new JTextField(5);
+		avarage.setText("20");	//in media ci sono 20 gradi in casa
+		avarage.setEditable(true);
 		threshold = new JTextField(5);
 		threshold.setText("15");
 		threshold.setEditable(true);
@@ -62,8 +62,8 @@ public class SensorsView extends JFrame implements ActionListener {
 		JPanel controlPanel = new JPanel();
 		controlPanel.add(startButton);
 		controlPanel.add(stopButton);
-		controlPanel.add(new JLabel("MilliSeconds"));
-		controlPanel.add(milliSeconds);
+		controlPanel.add(new JLabel("Avarage"));
+		controlPanel.add(avarage);
 		controlPanel.add(new JLabel("Threshold"));
 		controlPanel.add(threshold);
 
@@ -113,17 +113,17 @@ public class SensorsView extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd.equals("start")) {
-			notifyStarted(Integer.parseInt(milliSeconds.getText()), Double.parseDouble(threshold.getText()));
+			notifyStarted(Integer.parseInt(avarage.getText()), Double.parseDouble(threshold.getText()));
 			startButton.setEnabled(false);
 			stopButton.setEnabled(true);
 			threshold.setEnabled(false);
-			milliSeconds.setEnabled(false);
+			avarage.setEnabled(false);
 		} else if (cmd.equals("stop")) {
 			notifyStopped();
 			startButton.setEnabled(true);
 			stopButton.setEnabled(false);
 			threshold.setEnabled(true);
-			milliSeconds.setEnabled(true);
+			avarage.setEnabled(true);
 		}
 	}
 

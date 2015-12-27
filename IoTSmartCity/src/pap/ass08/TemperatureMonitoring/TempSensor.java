@@ -5,10 +5,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
- * Class implementing a simulated temperature sensor
- * (Assignment #08)
- * 
- * @author aricci
  *
  */
 public class TempSensor {	
@@ -71,7 +67,6 @@ public class TempSensor {
 			}
 		}
 	}
-		
 }
 
 class BaseTimeValue {

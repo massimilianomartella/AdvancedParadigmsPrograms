@@ -7,9 +7,7 @@ package pap.ass08.TemperatureMonitoring;
  *
  */
 public class TestSensor {
-
 	public static void main(String[] args) {
-		
 		/* 
 		 * create a sensor producing values between 50 and 75, 
 		 * with probability of getting spikes = 0.01
