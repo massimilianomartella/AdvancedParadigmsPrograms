@@ -1,12 +1,17 @@
 package com.IoT.TemperatureHumidityMonitoring;
 
 import java.awt.Color;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
+import rx.Scheduler.Worker;
 import rx.observables.ConnectableObservable;
+import rx.schedulers.Schedulers;
 
 import com.IoT.Arduino.sensors.DataDht11;
+import com.IoT.Utils.GetRandomDouble;
 import com.IoT.thingSpeak.ThingSpeakWebClient;
 
 public class ModelReactiveControlSensor extends Thread {
@@ -17,6 +22,7 @@ public class ModelReactiveControlSensor extends Thread {
 	private double thresholdTemperatureError, thresholdHumidityError;
 	private int frequencyTemperature, frequencyHumidity;
 	private double temperatureRange, humidityRange;
+
 	private ThingSpeakWebClient ts;
 
 	public ModelReactiveControlSensor(double temperatureRange,
@@ -24,9 +30,7 @@ public class ModelReactiveControlSensor extends Thread {
 			int frequencyHumidity, StopFlag flag, SensorsView view,
 			MonitorFlag monitorTemperature, MonitorFlag monitorHumidity,
 			DataDht11 dht11) {
-		
-		ts = new ThingSpeakWebClient();
-		
+
 		this.monitorTemperature = monitorTemperature;
 		this.monitorHumidity = monitorHumidity;
 		this.flag = flag;
@@ -41,6 +45,8 @@ public class ModelReactiveControlSensor extends Thread {
 		this.frequencyTemperature = frequencyTemperature;
 		this.temperatureRange = temperatureRange;
 		this.humidityRange = humidityRange;
+
+		this.ts = new ThingSpeakWebClient();
 	}
 
 	@Override
@@ -86,11 +92,65 @@ public class ModelReactiveControlSensor extends Thread {
 							view.setUpdatedJPaneAreaTemperature(
 									"Temperature > " + v + "\n", Color.black);
 							// System.out.println("Media: " + v + "\n\n");
-							
-							
-								
-							
-							
+						}
+					}, (Throwable t) -> {
+						System.out.println("error  " + t);
+					}, () -> {
+						// When finish, write "Completed" on the JPanelArea
+						view.setUpdatedJPaneAreaTemperature("Completed\n",
+								Color.gray);
+					});
+
+		connectObsTemperature.interval(20, TimeUnit.SECONDS, Schedulers.io())
+				.subscribe(
+						(Long v) -> {
+							System.out.println(v);
+							ts.sendMsg(1, GetRandomDouble.getNum(0, 100));
+						},
+						(Throwable t) -> {
+							System.out.println("error  " + t);
+						},
+						() -> {
+							// When finish, write "Completed" on the JPanelArea
+							view.setUpdatedJPaneAreaTemperature("Completed\n",
+									Color.gray);
+						});
+
+//		connectObsHumidity.interval(20, TimeUnit.SECONDS, Schedulers.io())
+//				.subscribe(
+//						(Long v) -> {
+//							//System.out.println(v);
+//							//ts.sendMsgOld(2, GetRandomDouble.getNum(0, 100));
+//						},
+//						(Throwable t) -> {
+//							System.out.println("error  " + t);
+//						},
+//						() -> {
+//							// When finish, write "Completed" on the JPanelArea
+//							view.setUpdatedJPaneAreaTemperature("Completed\n",
+//									Color.gray);
+//						});
+
+		connectObsTemperature
+				.subscribe((Double v) -> {
+					// If the value is out of range
+						if ((v) < (temperatureRange - thresholdTemperatureError)
+								| (v) > (temperatureRange + thresholdTemperatureError)) {
+							// view.setUpdatedJPaneArea("Value out of range > "
+							// + v +
+							// "\n",
+							// Color.red);
+						} else { // if the value is fine (between the range)
+							// Visualise the result through the function
+							// setMaxMinvalue and setUpdateMinMaxValue
+							monitorTemperature.setMaxMinValue(v);
+							monitorTemperature.setValue(v);
+							view.setUpdatedMinMaxValueTemperature(
+									monitorTemperature.getMinValue(),
+									monitorTemperature.getMaxValue());
+							view.setUpdatedJPaneAreaTemperature(
+									"Temperature > " + v + "\n", Color.black);
+							// System.out.println("Media: " + v + "\n\n");
 						}
 					}, (Throwable t) -> {
 						System.out.println("error  " + t);
@@ -112,18 +172,13 @@ public class ModelReactiveControlSensor extends Thread {
 					// Show the result through the function
 					// setMaxMinvalue and setUpdateMinMaxValue
 					monitorHumidity.setMaxMinValue(v);
+					monitorHumidity.setValue(v);
 					view.setUpdatedMinMaxValueHumidity(
 							monitorHumidity.getMinValue(),
 							monitorHumidity.getMaxValue());
 					view.setUpdatedJPaneAreaHumidity("Humidity > " + v + "\n",
 							Color.black);
 					// System.out.println("Media: " + v + "\n\n");
-					
-					
-//						ts.sendMsg(2, v);	//channel 2 for Humidity
-				
-					
-					
 				}
 			}, (Throwable t) -> {
 				System.out.println("error  " + t);

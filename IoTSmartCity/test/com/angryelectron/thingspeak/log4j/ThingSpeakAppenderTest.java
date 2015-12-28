@@ -19,7 +19,9 @@
 
 package com.angryelectron.thingspeak.log4j;
 
+import com.angryelectron.thingspeak.Entry;
 import com.angryelectron.thingspeak.TestChannelSettings;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -63,7 +65,9 @@ public class ThingSpeakAppenderTest {
 	@Test
 	public void testAppend() throws InterruptedException {
 		System.out.println("testAppend");
-		ThingSpeakAppender appender = new ThingSpeakAppender();
+		Entry entry = new Entry();
+		entry.setField(1, "28.8");
+		ThingSpeakAppender appender = new ThingSpeakAppender(entry);
 		appender.configureChannel(channelNumber, apiWriteKey, null);
 		appender.setThreshold(Level.INFO);
 		appender.activateOptions();

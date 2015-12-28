@@ -10,6 +10,7 @@ package com.IoT.TemperatureHumidityMonitoring;
 public class MonitorFlag {
 
 	private double minValue, maxValue;
+	private double value;
 
 	public MonitorFlag() {
 		minValue = 10000000;
@@ -29,6 +30,14 @@ public class MonitorFlag {
 
 	public double getMaxValue() {
 		return maxValue;
+	}
+
+	public synchronized void setValue(Double v) {
+		this.value = v;
+	}
+	
+	public double getValue() {
+		return value;
 	}
 
 }

@@ -36,7 +36,7 @@ public class Channel {
 
 	// TODO: the API url should be configurable so the client can be used with
 	// self-hosted servers.
-	private String APIURL = "http://api.thingspeak.com";
+	private String APIURL = "http://184.106.153.149";
 	private static final String APIHEADER = "X-THINGSPEAKAPIKEY";
 	private final Integer channelId;
 	private String readAPIKey;

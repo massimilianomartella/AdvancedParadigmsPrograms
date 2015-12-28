@@ -79,11 +79,12 @@ public class ThingSpeakAppender extends AppenderSkeleton {
 	private final String apiPropertyKey = "com.angryelectron.thingspeak.log4j.apiWriteKey";
 	private final String serverPropertyKey = "com.angryelectron.thingspeak.log4j.server";
 	private Channel channel;
+	private Entry entry = new Entry();
 
 	/**
 	 * Constructor.
 	 */
-	public ThingSpeakAppender() {
+	public ThingSpeakAppender(Entry entry) {
 		try {
 			properties
 					.load(getClass().getResourceAsStream("/log4j.properties"));
@@ -97,6 +98,9 @@ public class ThingSpeakAppender extends AppenderSkeleton {
 			}
 		} catch (IOException | NumberFormatException | NullPointerException ex) {
 			/* ignore - will be caught and logged in append() */
+		}
+		finally {
+			this.entry = entry;
 		}
 	}
 
@@ -128,15 +132,11 @@ public class ThingSpeakAppender extends AppenderSkeleton {
 	 */
 	@Override
 	protected void append(LoggingEvent event) {
-		Date timeStamp = new Date(event.timeStamp);
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Entry entry = new Entry();
-		entry.setField(1, dateFormat.format(timeStamp));
-		entry.setField(2, event.getLevel().toString());
-		entry.setField(3, event.getMessage().toString());
 		try {
 			channel.update(entry);
+			System.out.println("Correct append!");
 		} catch (UnirestException | ThingSpeakException ex) {
+			System.out.println("Not correct append!");
 			Logger.getLogger(ThingSpeakAppender.class.getName()).log(
 					Level.SEVERE, null, ex);
 		}
