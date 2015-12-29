@@ -73,63 +73,19 @@ public class ModelReactiveControlSensor extends Thread {
 				observableTemperature, "Temperature", temperatureRange,
 				thresholdTemperatureError).publish();
 
-		connectObsTemperature
-				.subscribe((Double v) -> {
-					// If the value is out of range
-						if ((v) < (temperatureRange - thresholdTemperatureError)
-								| (v) > (temperatureRange + thresholdTemperatureError)) {
-							// view.setUpdatedJPaneArea("Value out of range > "
-							// + v +
-							// "\n",
-							// Color.red);
-						} else { // if the value is fine (between the range)
-							// Visualise the result through the function
-							// setMaxMinvalue and setUpdateMinMaxValue
-							monitorTemperature.setMaxMinValue(v);
-							view.setUpdatedMinMaxValueTemperature(
-									monitorTemperature.getMinValue(),
-									monitorTemperature.getMaxValue());
-							view.setUpdatedJPaneAreaTemperature(
-									"Temperature > " + v + "\n", Color.black);
-							// System.out.println("Media: " + v + "\n\n");
-						}
-					}, (Throwable t) -> {
-						System.out.println("error  " + t);
-					}, () -> {
-						// When finish, write "Completed" on the JPanelArea
-						view.setUpdatedJPaneAreaTemperature("Completed\n",
-								Color.gray);
-					});
-
-		connectObsTemperature.interval(20, TimeUnit.SECONDS, Schedulers.io())
-				.subscribe(
-						(Long v) -> {
-							System.out.println(v);
-							ts.sendMsg(1, GetRandomDouble.getNum(0, 100));
-						},
-						(Throwable t) -> {
-							System.out.println("error  " + t);
-						},
-						() -> {
-							// When finish, write "Completed" on the JPanelArea
-							view.setUpdatedJPaneAreaTemperature("Completed\n",
-									Color.gray);
-						});
-
-//		connectObsHumidity.interval(20, TimeUnit.SECONDS, Schedulers.io())
-//				.subscribe(
-//						(Long v) -> {
-//							//System.out.println(v);
-//							//ts.sendMsgOld(2, GetRandomDouble.getNum(0, 100));
-//						},
-//						(Throwable t) -> {
-//							System.out.println("error  " + t);
-//						},
-//						() -> {
-//							// When finish, write "Completed" on the JPanelArea
-//							view.setUpdatedJPaneAreaTemperature("Completed\n",
-//									Color.gray);
-//						});
+		Observable.interval(20, TimeUnit.SECONDS, Schedulers.io()).subscribe(
+				(Long v) -> {
+					if (!flag.isDone()) {
+						System.out.println(v);
+						ts.sendMsg(1, monitorTemperature.getValue(), 2,
+								monitorHumidity.getValue());
+					}
+				}, (Throwable t) -> {
+					System.out.println("error  " + t);
+				}, () -> {
+					// When finish, write "Completed" on the JPanelArea
+				view.setUpdatedJPaneAreaTemperature("Completed\n", Color.gray);
+			});
 
 		connectObsTemperature
 				.subscribe((Double v) -> {

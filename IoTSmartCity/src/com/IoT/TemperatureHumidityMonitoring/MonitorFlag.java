@@ -35,7 +35,7 @@ public class MonitorFlag {
 	public synchronized void setValue(Double v) {
 		this.value = v;
 	}
-	
+
 	public double getValue() {
 		return value;
 	}

@@ -116,7 +116,7 @@ public class Sensors implements SerialPortEventListener {
 		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 			try {
 				String inputLine = input.readLine();
-				System.out.println("InputLine: " + inputLine);
+				// System.out.println("InputLine: " + inputLine);
 
 				getCurrentValue(inputLine);
 

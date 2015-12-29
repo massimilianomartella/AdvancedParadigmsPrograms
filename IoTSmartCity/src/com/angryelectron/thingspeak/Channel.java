@@ -169,7 +169,7 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public Integer update(Entry entry) throws UnirestException,
+	public synchronized Integer update(Entry entry) throws UnirestException,
 			ThingSpeakException {
 		HttpResponse<String> response = Unirest.post(APIURL + "/update")
 				.header(APIHEADER, this.writeAPIKey)

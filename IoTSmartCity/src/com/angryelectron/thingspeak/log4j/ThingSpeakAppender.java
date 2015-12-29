@@ -79,12 +79,12 @@ public class ThingSpeakAppender extends AppenderSkeleton {
 	private final String apiPropertyKey = "com.angryelectron.thingspeak.log4j.apiWriteKey";
 	private final String serverPropertyKey = "com.angryelectron.thingspeak.log4j.server";
 	private Channel channel;
-	private Entry entry = new Entry();
+	private Entry entry;
 
 	/**
 	 * Constructor.
 	 */
-	public ThingSpeakAppender(Entry entry) {
+	public ThingSpeakAppender() {
 		try {
 			properties
 					.load(getClass().getResourceAsStream("/log4j.properties"));
@@ -96,11 +96,10 @@ public class ThingSpeakAppender extends AppenderSkeleton {
 			if (!server.isEmpty()) {
 				channel.setUrl(server);
 			}
+
+			entry = new Entry();
 		} catch (IOException | NumberFormatException | NullPointerException ex) {
 			/* ignore - will be caught and logged in append() */
-		}
-		finally {
-			this.entry = entry;
 		}
 	}
 
@@ -134,9 +133,20 @@ public class ThingSpeakAppender extends AppenderSkeleton {
 	protected void append(LoggingEvent event) {
 		try {
 			channel.update(entry);
-			System.out.println("Correct append!");
+			System.out.println("Correct append! event");
 		} catch (UnirestException | ThingSpeakException ex) {
-			System.out.println("Not correct append!");
+			System.out.println("Not correct append! event");
+			Logger.getLogger(ThingSpeakAppender.class.getName()).log(
+					Level.SEVERE, null, ex);
+		}
+	}
+
+	public synchronized void append(Entry entry) {
+		try {
+			channel.update(entry);
+			System.out.println("Correct append! entry");
+		} catch (UnirestException | ThingSpeakException ex) {
+			System.out.println("Not correct append! entry");
 			Logger.getLogger(ThingSpeakAppender.class.getName()).log(
 					Level.SEVERE, null, ex);
 		}

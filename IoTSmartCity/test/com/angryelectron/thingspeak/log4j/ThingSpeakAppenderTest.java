@@ -67,7 +67,7 @@ public class ThingSpeakAppenderTest {
 		System.out.println("testAppend");
 		Entry entry = new Entry();
 		entry.setField(1, "28.8");
-		ThingSpeakAppender appender = new ThingSpeakAppender(entry);
+		ThingSpeakAppender appender = new ThingSpeakAppender();
 		appender.configureChannel(channelNumber, apiWriteKey, null);
 		appender.setThreshold(Level.INFO);
 		appender.activateOptions();
