@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Climate Control Web Page</title>
+<!-- Include meta tag to ensure proper rendering and touch zooming -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Include jQuery Mobile stylesheets -->
+<link rel="stylesheet"
+	href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<!-- Include the jQuery library -->
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<!-- Include the jQuery Mobile library -->
+<script
+	src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script
+	src="https://raw.github.com/aterrien/jQuery-Knob/master/js/jquery.knob.js"></script>
+<script type="text/javascript">
+	$.ajax({
+		type : 'POST',
+		url : 'http://localhost:1111',
+
+		data : {
+			id : '123'
+		},
+
+		dataType : 'json',
+
+		success : function(data) {
+			//console.log("success");
+
+			$.each(data, function(k, v) {
+				$("#" + k).val(v);
+				//document.getElementById(k).value = v;
+				$("input.knob").trigger('change');
+				console.log(k + " : " + v);
+				if (k == "temperature") {
+					$("#slider").val(v).slider("refresh");
+
+				}
+				if(k == "flipSwitch") {
+					$("#" + k).val(v).slider('refresh');
+				}
+				
+			});
+		},
+
+		error : function(xhr, status, errorThrown) {
+			alert("Sorry, there was a problem!");
+			console.log("Error: " + errorThrown);
+			console.log("Status: " + status);
+			console.dir(xhr);
+		},
+
+		// Code to run regardless of success or failure
+		complete : function(xhr, status) {
+			console.log("The request is complete!");
+		}
+
+	});
+
+	$(function($) {
+		$(".knob").knob(
+				{
+					change : function(value) {
+						//console.log("change : " + value);
+					},
+					release : function(value) {
+						//console.log(this.$.attr('value'));
+						console.log("release : " + value);
+					},
+					cancel : function() {
+						console.log("cancel : ", this);
+					},
+					/*format : function (value) {
+					    return value + '%';
+					},*/
+					draw : function() {
+
+						// "tron" case
+						if (this.$.data('skin') == 'tron') {
+
+							this.cursorExt = 0.3;
+
+							var a = this.arc(this.cv) // Arc
+							, pa // Previous arc
+							, r = 1;
+
+							this.g.lineWidth = this.lineWidth;
+
+							if (this.o.displayPrevious) {
+								pa = this.arc(this.v);
+								this.g.beginPath();
+								this.g.strokeStyle = this.pColor;
+								this.g.arc(this.xy, this.xy, this.radius
+										- this.lineWidth, pa.s, pa.e, pa.d);
+								this.g.stroke();
+							}
+
+							this.g.beginPath();
+							this.g.strokeStyle = r ? this.o.fgColor
+									: this.fgColor;
+							this.g.arc(this.xy, this.xy, this.radius
+									- this.lineWidth, a.s, a.e, a.d);
+							this.g.stroke();
+
+							this.g.lineWidth = 2;
+							this.g.beginPath();
+							this.g.strokeStyle = this.o.fgColor;
+							this.g.arc(this.xy, this.xy, this.radius
+									- this.lineWidth + 1 + this.lineWidth * 2
+									/ 3, 0, 2 * Math.PI, false);
+							this.g.stroke();
+
+							return false;
+						}
+					}
+				});
+	});
+</script>
+
+</head>
+<body>
+	<div data-role="page">
+		<div data-role="header" style="overflow: hidden;">
+			<h1>Smart Control Home</h1>
+			<div data-role="navbar">
+				<ul>
+					<li><a href="#" class="ui-btn-active">Home</a></li>
+					<li><a href="#">Data</a></li>
+				</ul>
+			</div>
+			<!-- /navbar -->
+		</div>
+		<div data-role="main" class="ui-content">
+			<div id="content" style="aligh: center;">
+				<!-- <div id="divTest" tabindex="1">Suggestions:</div> -->
+
+				<div class="demo"
+					style="width: 50%; height: 250px; text-align: center; float: left;">
+					<p>Temperature</p>
+					<input id="temperature"
+						style="display: inline; width: 200px; height: 200px;" class="knob"
+						data-angleOffset=-125 data-angleArc=250 data-fgColor="#2972C1"
+						data-rotation="clockwise" value="0" readonly="readonly">
+				</div>
+
+				<div class="demo"
+					style="width: 50%; height: 250px; text-align: center; float: right;">
+					<p>Humidity</p>
+					<input id="humidity"
+						style="display: inline; width: 200px; height: 200px;" class="knob"
+						data-angleOffset=-125 data-angleArc=250 data-fgColor="#2972C1"
+						data-rotation="clockwise" value="0" readonly="readonly">
+
+				</div>
+				<br style="clear: both;" />
+			</div>
+			<br> <label for="flipSwitch">Flip switch:</label> 
+			<select
+				name="flipSwitch" id="flipSwitch" data-role="slider">     
+				<option value="off">Off</option>     
+				<option value="on">On</option>
+			</select> <label for="points">Set Temperature:</label> 
+			<input type="range"
+				name="slider" id="slider" data-highlight="true" min="18"
+				max="29" value="22" readonly="readonly" />
+
+		</div>
+		<div data-role="footer">
+			<h1>Control Clima Center</h1>
+		</div>
+	</div>
+</body>
+</html>
