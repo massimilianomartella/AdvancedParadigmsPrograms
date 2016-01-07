@@ -33,10 +33,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class FeedTest {
-
+	
 	/**
-	 * Update the channel with some sample data that will be read-back by all of
-	 * the Feed Tests.
+	 * Update the channel with some sample data that will be read-back by all of the Feed Tests.
 	 * 
 	 * @throws java.lang.Exception
 	 */
@@ -60,25 +59,21 @@ public class FeedTest {
 		entry.setStatus("unimportant status");
 		entry.setTweet("irrelevant tweet");
 		entry.setTwitter("invalid twitter user");
-
-		Channel publicChannel = new Channel(
-				TestChannelSettings.publicChannelID,
+		
+		Channel publicChannel = new Channel(TestChannelSettings.publicChannelID,
 				TestChannelSettings.publicChannelWriteKey);
-		Channel privateChannel = new Channel(
-				TestChannelSettings.privateChannelID,
-				TestChannelSettings.privateChannelWriteKey,
-				TestChannelSettings.privateChannelReadKey);
-
+		Channel privateChannel = new Channel(TestChannelSettings.privateChannelID,
+				TestChannelSettings.privateChannelWriteKey, TestChannelSettings.privateChannelReadKey);
+		
 		publicChannel.setUrl(TestChannelSettings.server);
 		privateChannel.setUrl(TestChannelSettings.server);
-
+		
 		publicChannel.update(entry);
 		privateChannel.update(entry);
 	}
-
+	
 	/**
-	 * When testing is complete, pause before running other tests to prevent
-	 * hitting the API rate limit.
+	 * When testing is complete, pause before running other tests to prevent hitting the API rate limit.
 	 * 
 	 * @throws Exception
 	 */
@@ -86,17 +81,15 @@ public class FeedTest {
 	public static void tearDownClass() throws Exception {
 		Thread.sleep(TestChannelSettings.rateLimit);
 	}
-
+	
 	@Test
 	public void testGetChannelFeedPublic() throws Exception {
 		System.out.println("testGetChannelFeedPublic");
-		Channel publicChannel = new Channel(
-				TestChannelSettings.publicChannelID,
+		Channel publicChannel = new Channel(TestChannelSettings.publicChannelID,
 				TestChannelSettings.publicChannelWriteKey);
 		publicChannel.setUrl(TestChannelSettings.server);
 		Feed publicFeed = publicChannel.getChannelFeed();
-		assertEquals(TestChannelSettings.publicChannelID,
-				publicFeed.getChannelId());
+		assertEquals(TestChannelSettings.publicChannelID, publicFeed.getChannelId());
 		assertNotNull(publicFeed.getChannelCreationDate());
 		assertNotNull(publicFeed.getChannelDescription());
 		assertNotNull(publicFeed.getChannelName());
@@ -106,18 +99,15 @@ public class FeedTest {
 		assertNotNull(publicFeed.getEntryMap());
 		assertNotNull(publicFeed.getFieldName(1));
 	}
-
+	
 	@Test
 	public void testGetChannelFeedPrivate() throws Exception {
 		System.out.println("testGetChannelFeedPrivate");
-		Channel publicChannel = new Channel(
-				TestChannelSettings.privateChannelID,
-				TestChannelSettings.privateChannelWriteKey,
-				TestChannelSettings.privateChannelReadKey);
+		Channel publicChannel = new Channel(TestChannelSettings.privateChannelID,
+				TestChannelSettings.privateChannelWriteKey, TestChannelSettings.privateChannelReadKey);
 		publicChannel.setUrl(TestChannelSettings.server);
 		Feed publicFeed = publicChannel.getChannelFeed();
-		assertEquals(TestChannelSettings.privateChannelID,
-				publicFeed.getChannelId());
+		assertEquals(TestChannelSettings.privateChannelID, publicFeed.getChannelId());
 		assertNotNull(publicFeed.getChannelCreationDate());
 		assertNotNull(publicFeed.getChannelDescription());
 		assertNotNull(publicFeed.getChannelName());
@@ -127,12 +117,11 @@ public class FeedTest {
 		assertNotNull(publicFeed.getEntryList());
 		assertNotNull(publicFeed.getEntryMap());
 		assertNotNull(publicFeed.getFieldName(1));
-
+		
 		Entry entry = publicChannel.getLastChannelEntry();
-
+		
 		/**
-		 * any one of these may fail if not defined in the Channel Settings via
-		 * the web.
+		 * any one of these may fail if not defined in the Channel Settings via the web.
 		 */
 		assertNotNull(entry.getField(1));
 		assertNotNull(entry.getField(2));
@@ -143,12 +132,11 @@ public class FeedTest {
 		assertNotNull(entry.getField(7));
 		assertNotNull(entry.getField(8));
 	}
-
+	
 	@Test
 	public void testGetChannelFeedWithOptions() throws Exception {
 		System.out.println("testGetChannelFeedWithOptions");
-		Channel publicChannel = new Channel(
-				TestChannelSettings.publicChannelID,
+		Channel publicChannel = new Channel(TestChannelSettings.publicChannelID,
 				TestChannelSettings.publicChannelWriteKey);
 		publicChannel.setUrl(TestChannelSettings.server);
 		FeedParameters options = new FeedParameters();
@@ -161,19 +149,17 @@ public class FeedTest {
 		assertNotNull(entry.getLatitude());
 		assertNotNull(entry.getLongitude());
 	}
-
+	
 	@Test
 	public void testGetLastEntry() throws Exception {
 		System.out.println("testGetLastEntry");
-		Channel publicChannel = new Channel(
-				TestChannelSettings.publicChannelID,
+		Channel publicChannel = new Channel(TestChannelSettings.publicChannelID,
 				TestChannelSettings.publicChannelWriteKey);
 		publicChannel.setUrl(TestChannelSettings.server);
 		Entry entry = publicChannel.getLastChannelEntry();
-
+		
 		/**
-		 * any one of these may fail if not defined in the Channel Settings via
-		 * the web.
+		 * any one of these may fail if not defined in the Channel Settings via the web.
 		 */
 		assertNotNull(entry.getField(1));
 		assertNotNull(entry.getField(2));
@@ -184,12 +170,11 @@ public class FeedTest {
 		assertNotNull(entry.getField(7));
 		assertNotNull(entry.getField(8));
 	}
-
+	
 	@Test
 	public void testGetLastEntryWithOptions() throws Exception {
 		System.out.println("testGetLastEntryWithOptions");
-		Channel publicChannel = new Channel(
-				TestChannelSettings.publicChannelID,
+		Channel publicChannel = new Channel(TestChannelSettings.publicChannelID,
 				TestChannelSettings.publicChannelWriteKey);
 		publicChannel.setUrl(TestChannelSettings.server);
 		FeedParameters options = new FeedParameters();
@@ -201,7 +186,7 @@ public class FeedTest {
 		assertNotNull(entry.getLatitude());
 		assertNotNull(entry.getLongitude());
 	}
-
+	
 	@Test
 	public void testGetLastEntryWithTimezoneOffset() throws Exception {
 		System.out.println("testGetLastEntryWithTimezoneOffset");
@@ -213,7 +198,7 @@ public class FeedTest {
 		SimpleDateFormat df = new SimpleDateFormat("Z");
 		assert (df.format(pst).equals("-0800"));
 	}
-
+	
 	@Test
 	public void testGetFieldFeed() throws Exception {
 		System.out.println("testGetFieldFeed");
@@ -230,13 +215,13 @@ public class FeedTest {
 		assertNotNull(feed.getEntryList());
 		assertNotNull(feed.getEntryMap());
 		assertNotNull(feed.getFieldName(1));
-
+		
 		Entry entry = feed.getChannelLastEntry();
 		assertNotNull(entry.getField(1));
 		assertNull(entry.getField(2));
-
+		
 	}
-
+	
 	@Test
 	public void testGetFieldFeedWithOptions() throws Exception {
 		System.out.println("testGetFieldFeedWithOptions");
@@ -254,7 +239,7 @@ public class FeedTest {
 		assertNotNull(entry.getLatitude());
 		assertNotNull(entry.getLongitude());
 	}
-
+	
 	@Test
 	public void testGetFieldFeedLastEntry() throws Exception {
 		System.out.println("testGetFieldFeedLastEntry");
@@ -264,7 +249,7 @@ public class FeedTest {
 		assertNotNull(entry.getField(1));
 		assertNull(entry.getField(2));
 	}
-
+	
 	@Test
 	public void testGetFieldFeedLastEntryWithOptions() throws Exception {
 		System.out.println("testGetFieldFeedLastEntryWithOptions");
@@ -281,7 +266,7 @@ public class FeedTest {
 		assertNotNull(entry.getLatitude());
 		assertNotNull(entry.getLongitude());
 	}
-
+	
 	@Test
 	public void testGetStatus() throws Exception {
 		System.out.println("testGetStatus");
@@ -292,7 +277,7 @@ public class FeedTest {
 		Entry last = entry.get(entry.size() - 1);
 		assertNotNull(last.getStatus());
 	}
-
+	
 	@Test
 	public void testGetStatusWithOptions() throws Exception {
 		System.out.println("testGetStatusWithOptions");
@@ -307,7 +292,7 @@ public class FeedTest {
 		SimpleDateFormat df = new SimpleDateFormat("Z");
 		assert (df.format(pst).equals("-0800"));
 	}
-
+	
 	@Test
 	public void testGetStatus_emptyFields() throws Exception {
 		System.out.println("testGetStatusEmptyFields");
@@ -332,7 +317,7 @@ public class FeedTest {
 			assertNull(entry.getLatitude());
 			assertNull(entry.getLongitude());
 		}
-
+		
 	}
-
+	
 }

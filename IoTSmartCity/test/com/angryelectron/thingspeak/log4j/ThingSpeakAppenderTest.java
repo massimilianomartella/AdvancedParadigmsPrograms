@@ -32,16 +32,16 @@ import org.junit.Test;
  * Test ThingSpeakAppender.
  */
 public class ThingSpeakAppenderTest {
-
+	
 	/**
 	 * Credentials for a test ThingSpeak channel.
 	 */
 	private final static Integer channelNumber = 73899;
 	private final static String apiWriteKey = "Q7PHB8FHLU89SBBC";
-
+	
 	public ThingSpeakAppenderTest() {
 	}
-
+	
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		BasicConfigurator.resetConfiguration();
@@ -49,15 +49,14 @@ public class ThingSpeakAppenderTest {
 		Logger.getLogger("org.apache.http").setLevel(Level.OFF);
 		pauseForAPIRateLimit();
 	}
-
+	
 	private static void pauseForAPIRateLimit() throws InterruptedException {
 		System.out.println("Waiting for rate limit to expire.");
 		Thread.sleep(TestChannelSettings.rateLimit);
 	}
-
+	
 	/**
-	 * Test of configureChannel method, of class ThingSpeakAppender. To view the
-	 * logged data on ThingSpeak, visit
+	 * Test of configureChannel method, of class ThingSpeakAppender. To view the logged data on ThingSpeak, visit
 	 * https://thingspeak.com/channels/15662/feeds.
 	 * 
 	 * @throws java.lang.InterruptedException
@@ -72,7 +71,6 @@ public class ThingSpeakAppenderTest {
 		appender.setThreshold(Level.INFO);
 		appender.activateOptions();
 		Logger.getRootLogger().addAppender(appender);
-		Logger.getLogger(this.getClass()).log(Level.INFO,
-				"Test message from ThingSpeakAppender");
+		Logger.getLogger(this.getClass()).log(Level.INFO, "Test message from ThingSpeakAppender");
 	}
 }

@@ -29,7 +29,7 @@ import java.util.List;
  * @author abythell
  */
 public class PublicChannel {
-
+	
 	/**
 	 * This class must match the JSON returned by ThingSpeak.
 	 */
@@ -37,11 +37,10 @@ public class PublicChannel {
 		private Integer id;
 		private String name;
 	}
-
+	
 	/**
-	 * These fields must match the JSON returned by ThingSpeak. They are
-	 * populated by de-serializing a JSON stream using GSON in the
-	 * PublicIterator class.
+	 * These fields must match the JSON returned by ThingSpeak. They are populated by de-serializing a JSON stream using
+	 * GSON in the PublicIterator class.
 	 */
 	private Date created_at;
 	private String description;
@@ -54,7 +53,7 @@ public class PublicChannel {
 	private Integer ranking;
 	private String username;
 	private ArrayList<Tag> tags = new ArrayList<>();
-
+	
 	/**
 	 * Get channel name.
 	 * 
@@ -63,7 +62,7 @@ public class PublicChannel {
 	public String getName() {
 		return name;
 	}
-
+	
 	/**
 	 * Get channel creation date.
 	 * 
@@ -72,7 +71,7 @@ public class PublicChannel {
 	public Date getCreatedAt() {
 		return created_at;
 	}
-
+	
 	/**
 	 * Get channel description.
 	 * 
@@ -81,7 +80,7 @@ public class PublicChannel {
 	public String getDescription() {
 		return description;
 	}
-
+	
 	/**
 	 * Get channel elevation.
 	 * 
@@ -90,7 +89,7 @@ public class PublicChannel {
 	public Double getElevation() {
 		return elevation;
 	}
-
+	
 	/**
 	 * Get channel id. The id is required to access the channel's feed.
 	 * 
@@ -99,7 +98,7 @@ public class PublicChannel {
 	public Integer getId() {
 		return id;
 	}
-
+	
 	/**
 	 * Get the id of the last entry posted to this channel.
 	 * 
@@ -108,37 +107,34 @@ public class PublicChannel {
 	public Integer getLastEntryId() {
 		return last_entry_id;
 	}
-
+	
 	/**
 	 * Get the latitude of this channel.
 	 * 
-	 * @return Latitude in decimal degrees, or 0.0 if no latitude was set for
-	 *         this channel.
+	 * @return Latitude in decimal degrees, or 0.0 if no latitude was set for this channel.
 	 */
 	public Double getLatitude() {
 		return latitude;
 	}
-
+	
 	/**
 	 * Get the longitude of this channel.
 	 * 
-	 * @return Longitude in decimal degrees, or 0.0 if no longitude was set for
-	 *         this channel.
+	 * @return Longitude in decimal degrees, or 0.0 if no longitude was set for this channel.
 	 */
 	public Double getLongitude() {
 		return longitude;
 	}
-
+	
 	/**
-	 * Get the channel's ranking. It is unclear to the author how rankings are
-	 * compiled.
+	 * Get the channel's ranking. It is unclear to the author how rankings are compiled.
 	 * 
 	 * @return Rank.
 	 */
 	public Integer getRanking() {
 		return ranking;
 	}
-
+	
 	/**
 	 * Get the name of the user who owns this channel.
 	 * 
@@ -147,14 +143,13 @@ public class PublicChannel {
 	public String getUsername() {
 		return username;
 	}
-
+	
 	/**
 	 * Get the channel's tags.
 	 * 
 	 * @return A List of tags, which can be passed to
-	 *         {@link PublicChannelCollection#PublicChannelCollection(java.lang.String)}
-	 *         to obtain a list of other public channels containing the same
-	 *         tag.
+	 *         {@link PublicChannelCollection#PublicChannelCollection(java.lang.String)} to obtain a list of other
+	 *         public channels containing the same tag.
 	 */
 	public List<String> getTags() {
 		List<String> list = new ArrayList<>();
@@ -163,5 +158,5 @@ public class PublicChannel {
 		}
 		return list;
 	}
-
+	
 }

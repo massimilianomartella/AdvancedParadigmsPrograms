@@ -10,11 +10,11 @@ import javax.swing.SwingUtilities;
 
 public class SwingProgressBar extends JPanel {
 	JProgressBar pbar;
-
+	
 	static final int MY_MINIMUM = 0;
-
+	
 	static final int MY_MAXIMUM = 100;
-
+	
 	public SwingProgressBar() {
 		// initialize Progress Bar
 		pbar = new JProgressBar();
@@ -23,21 +23,21 @@ public class SwingProgressBar extends JPanel {
 		// add to JPanel
 		add(pbar);
 	}
-
+	
 	public void updateBar(int newValue) {
 		pbar.setValue(newValue);
 	}
-
+	
 	public static void main(String args[]) {
-
+		
 		final SwingProgressBar it = new SwingProgressBar();
-
+		
 		JFrame frame = new JFrame("Progress Bar Example");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(it);
 		frame.pack();
 		frame.setVisible(true);
-
+		
 		// run a loop to demonstrate raising
 		for (int i = MY_MINIMUM; i <= MY_MAXIMUM; i++) {
 			final int percent = i;

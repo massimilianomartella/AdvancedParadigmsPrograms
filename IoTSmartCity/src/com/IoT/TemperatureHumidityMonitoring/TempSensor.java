@@ -17,18 +17,16 @@ public class TempSensor {
 	private double spikeVar;
 	private UpdateTask updateTask;
 	private ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
-
+	
 	/**
-	 * Create a sensor producing values in a (min,max) range, with possible
-	 * spikes
+	 * Create a sensor producing values in a (min,max) range, with possible spikes
 	 * 
 	 * @param min
 	 *            range min
 	 * @param max
 	 *            range max
 	 * @param spikeFreq
-	 *            - probability to read a spike (0 = no spikes, 1 = always
-	 *            spikes)
+	 *            - probability to read a spike (0 = no spikes, 1 = always spikes)
 	 */
 	public TempSensor(double min, double max, double spikeFreq) {
 		gen = new Random(System.nanoTime());
@@ -38,13 +36,12 @@ public class TempSensor {
 		this.spikeFreq = spikeFreq;
 		spikeVar = range * 10;
 		updateTask = new UpdateTask();
-		exec.scheduleAtFixedRate(updateTask, 0, 100,
-				java.util.concurrent.TimeUnit.MILLISECONDS);
-
+		exec.scheduleAtFixedRate(updateTask, 0, 100, java.util.concurrent.TimeUnit.MILLISECONDS);
+		
 		/* initialize currentValue */
 		updateTask.run();
 	}
-
+	
 	/**
 	 * Reading the current sensor value
 	 * 
@@ -55,20 +52,19 @@ public class TempSensor {
 			return currentValue;
 		}
 	}
-
+	
 	class UpdateTask implements Runnable {
 		public void run() {
 			double newValue;
-
+			
 			double delta = (-0.5 + gen.nextDouble()) * range * 0.2;
-			newValue = zero + Math.sin(time.getCurrentValue()) * range * 0.8
-					+ delta;
-
+			newValue = zero + Math.sin(time.getCurrentValue()) * range * 0.8 + delta;
+			
 			boolean newSpike = gen.nextDouble() <= spikeFreq;
 			if (newSpike) {
 				newValue = currentValue + spikeVar;
 			}
-
+			
 			synchronized (this) {
 				currentValue = newValue;
 			}
@@ -78,7 +74,7 @@ public class TempSensor {
 
 class BaseTimeValue {
 	static BaseTimeValue instance;
-
+	
 	static BaseTimeValue getInstance() {
 		synchronized (BaseTimeValue.class) {
 			if (instance == null) {
@@ -87,10 +83,10 @@ class BaseTimeValue {
 			return instance;
 		}
 	}
-
+	
 	private double time;
 	private ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
-
+	
 	private BaseTimeValue() {
 		time = 0;
 		exec.scheduleAtFixedRate(() -> {
@@ -99,7 +95,7 @@ class BaseTimeValue {
 			}
 		}, 0, 100, java.util.concurrent.TimeUnit.MILLISECONDS);
 	}
-
+	
 	public double getCurrentValue() {
 		synchronized (exec) {
 			return time;

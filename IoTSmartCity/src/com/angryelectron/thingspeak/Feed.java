@@ -24,9 +24,8 @@ import java.util.Map;
 
 /**
  * <p>
- * ThingSpeak status, channel, or field feed. Methods for accessing feed info
- * and individual {@link Entry}s. Only the following methods are supported for
- * status feeds, as they contain limited channel information (other methods will
+ * ThingSpeak status, channel, or field feed. Methods for accessing feed info and individual {@link Entry}s. Only the
+ * following methods are supported for status feeds, as they contain limited channel information (other methods will
  * return null):
  * </p>
  * <ul>
@@ -36,8 +35,7 @@ import java.util.Map;
  * <li>{@link #getEntryMap() }</li>
  * </ul>
  * <p>
- * To obtain a Feed, call one of the {@link Channel} methods. For example, to
- * get feeds for channel 1234:
+ * To obtain a Feed, call one of the {@link Channel} methods. For example, to get feeds for channel 1234:
  * 
  * <pre>
  * {
@@ -50,14 +48,13 @@ import java.util.Map;
  * </pre>
  */
 public class Feed {
-
+	
 	/**
-	 * Although there are more sensible ways to build this class, the structure
-	 * must match the JSON returned by the ThingSpeak API to allow GSON to
-	 * de-serialize it.
+	 * Although there are more sensible ways to build this class, the structure must match the JSON returned by the
+	 * ThingSpeak API to allow GSON to de-serialize it.
 	 */
 	private class ChannelInfo {
-
+		
 		private Date created_at;
 		private String description;
 		private String field1;
@@ -73,47 +70,41 @@ public class Feed {
 		private String name;
 		private Date updated_at;
 	}
-
+	
 	private final ChannelInfo channel = new ChannelInfo();
 	private final ArrayList<Entry> feeds = new ArrayList<>();
-
+	
 	/**
-	 * Constructor is package/class private so it can only be created via GSON
-	 * and not created directly.
+	 * Constructor is package/class private so it can only be created via GSON and not created directly.
 	 */
 	private Feed() {
-
+		
 	}
-
+	
 	/**
-	 * Get channel creation date. Use
-	 * {@link FeedParameters#offset(java.lang.Integer)} to adjust to local time
-	 * zone.
+	 * Get channel creation date. Use {@link FeedParameters#offset(java.lang.Integer)} to adjust to local time zone.
 	 *
 	 * @return Date on which this channel was created; null for status feeds.
 	 */
 	public Date getChannelCreationDate() {
 		return channel.created_at;
 	}
-
+	
 	/**
-	 * Get channel description. Channel description can be set via the
-	 * ThingSpeak server web interface.
+	 * Get channel description. Channel description can be set via the ThingSpeak server web interface.
 	 *
 	 * @return Description of this channel; null for status feeds.
 	 */
 	public String getChannelDescription() {
 		return channel.description;
 	}
-
+	
 	/**
-	 * Get the user-defined name of a field. Define fields and names via the
-	 * ThingSpeak server web interface.
+	 * Get the user-defined name of a field. Define fields and names via the ThingSpeak server web interface.
 	 *
 	 * @param field
 	 *            1-8.
-	 * @return The assigned name of the field; null for status feeds or if the
-	 *         field is unassigned.
+	 * @return The assigned name of the field; null for status feeds or if the field is unassigned.
 	 */
 	public String getFieldName(Integer field) {
 		switch (field) {
@@ -136,7 +127,7 @@ public class Feed {
 		}
 		throw new IllegalArgumentException("Invalid field.");
 	}
-
+	
 	/**
 	 * Get the ID of this channel.
 	 *
@@ -145,39 +136,35 @@ public class Feed {
 	public Integer getChannelId() {
 		return channel.id;
 	}
-
+	
 	/**
 	 * Get the ID of the last entry made to this channel.
 	 *
-	 * @return The ID of the last entry made in this channel; null for status
-	 *         feeds.
+	 * @return The ID of the last entry made in this channel; null for status feeds.
 	 */
 	public Integer getChannelLastEntryId() {
 		return channel.last_entry_id;
 	}
-
+	
 	/**
-	 * Get the name of this channel. Set a name for the channel using the
-	 * ThingSpeak server's web interface.
+	 * Get the name of this channel. Set a name for the channel using the ThingSpeak server's web interface.
 	 *
 	 * @return The name of this channel; null if not set.
 	 */
 	public String getChannelName() {
 		return channel.name;
 	}
-
+	
 	/**
-	 * Get the date of the last channel update. Use
-	 * {@link FeedParameters#offset(java.lang.Integer)} to adjust to local
+	 * Get the date of the last channel update. Use {@link FeedParameters#offset(java.lang.Integer)} to adjust to local
 	 * timezone.
 	 *
-	 * @return The date of the last update of this channel; null for status
-	 *         feeds.
+	 * @return The date of the last update of this channel; null for status feeds.
 	 */
 	public Date getChannelUpdateDate() {
 		return channel.updated_at;
 	}
-
+	
 	/**
 	 * Get a List of all {@link Entry}s in this feed.
 	 *
@@ -186,7 +173,7 @@ public class Feed {
 	public ArrayList<Entry> getEntryList() {
 		return this.feeds;
 	}
-
+	
 	/**
 	 * Get a Map of all {@link Entry}s in this feed.
 	 *
@@ -199,12 +186,10 @@ public class Feed {
 		}
 		return map;
 	}
-
+	
 	/**
-	 * Get an Entry in the feed by ID. If the feed is large, or you need to
-	 * lookup many different entries, this method could be quite slow. It may be
-	 * better to call {@link #getEntryMap()} to obtain a map of entries indexed
-	 * by id.
+	 * Get an Entry in the feed by ID. If the feed is large, or you need to lookup many different entries, this method
+	 * could be quite slow. It may be better to call {@link #getEntryMap()} to obtain a map of entries indexed by id.
 	 *
 	 * @param id
 	 *            Entry ID.
@@ -214,27 +199,22 @@ public class Feed {
 	 */
 	public Entry getEntry(Integer id) throws ThingSpeakException {
 		for (Entry entry : this.feeds) {
-			if (entry.getEntryId().equals(id)) {
-				return entry;
-			}
+			if (entry.getEntryId().equals(id)) { return entry; }
 		}
-		throw new ThingSpeakException("Entry with ID " + id
-				+ " not found in feed.");
-
+		throw new ThingSpeakException("Entry with ID " + id + " not found in feed.");
+		
 	}
-
+	
 	/**
-	 * Get the last / latest entry in this feed. If you only need the last entry
-	 * and not the rest of the feed, consider using
-	 * {@link Channel#getLastChannelEntry()}.
+	 * Get the last / latest entry in this feed. If you only need the last entry and not the rest of the feed, consider
+	 * using {@link Channel#getLastChannelEntry()}.
 	 *
 	 * @return An Entry with id equal to the feed's last_entry_id.
 	 * @throws ThingSpeakException
-	 *             The channel does not have a last entry or the feed is a
-	 *             Status feed.
+	 *             The channel does not have a last entry or the feed is a Status feed.
 	 */
 	public Entry getChannelLastEntry() throws ThingSpeakException {
 		return getEntry(channel.last_entry_id);
 	}
-
+	
 }

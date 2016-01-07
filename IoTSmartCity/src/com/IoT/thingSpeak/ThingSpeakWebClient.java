@@ -10,17 +10,16 @@ public class ThingSpeakWebClient {
 	private int channelNumber = 73899;
 	private Channel channel;
 	Entry entry;
-
+	
 	public ThingSpeakWebClient() {
-
-		System.setProperty("org.apache.commons.logging.Log",
-				"org.apache.commons.logging.impl.Jdk14Logger");
+		
+		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.Jdk14Logger");
 		channel = new Channel(channelNumber, apiWriteKey);
 		entry = new Entry();
 	}
-
+	
 	public void sendMsg(int field1, Double value1, int field2, Double value2) {
-
+		
 		Entry entry = new Entry();
 		entry.setField(field1, String.valueOf(value1));
 		entry.setField(field2, String.valueOf(value2));
@@ -35,9 +34,9 @@ public class ThingSpeakWebClient {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static void main(String[] args) throws Exception {
-
+		
 		ThingSpeakWebClient ts = new ThingSpeakWebClient();
 		// ts.sendMsg(1, 28.9);
 		ts.sendMsg(1, 28.9, 2, 34.3);

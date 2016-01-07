@@ -23,18 +23,14 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * Create a new Entry to update a channel, or retrieve individual elements from
- * a {@link Feed}.
- * 
+ * Create a new Entry to update a channel, or retrieve individual elements from a {@link Feed}.
  */
 public class Entry {
-
+	
 	/**
-	 * The names of these private members must match the JSON fields in a
-	 * channel feed returned by ThingSpeak. If they don't, GSON might not be
-	 * able to deserialize the JSON feed into Entry objects. Note that
-	 * 'longitude' and 'latitude' are returned by feeds, but 'lat' and 'long'
-	 * are used when updating.
+	 * The names of these private members must match the JSON fields in a channel feed returned by ThingSpeak. If they
+	 * don't, GSON might not be able to deserialize the JSON feed into Entry objects. Note that 'longitude' and
+	 * 'latitude' are returned by feeds, but 'lat' and 'long' are used when updating.
 	 */
 	private Date created_at;
 	private Integer entry_id;
@@ -52,12 +48,11 @@ public class Entry {
 	private String status;
 	private String twitter;
 	private String tweet;
-
+	
 	private final HashMap<String, Object> updateMap = new HashMap<>();
-
+	
 	/**
-	 * Get a map of all fields in a format compatible with the API's update
-	 * parameters. Used internally by
+	 * Get a map of all fields in a format compatible with the API's update parameters. Used internally by
 	 * {@link Channel#update(com.angryelectron.thingspeak.Entry)}.
 	 * 
 	 * @return Field map.
@@ -65,15 +60,13 @@ public class Entry {
 	HashMap<String, Object> getUpdateMap() {
 		return updateMap;
 	}
-
+	
 	/**
-	 * Get data for a field. Fields must be enabled via the web in the Channel's
-	 * settings.
+	 * Get data for a field. Fields must be enabled via the web in the Channel's settings.
 	 * 
 	 * @param field
 	 *            1-8
-	 * @return Field data; null for status feeds, undefined fields, and field
-	 *         feeds where field was not specified.
+	 * @return Field data; null for status feeds, undefined fields, and field feeds where field was not specified.
 	 */
 	public Object getField(Integer field) {
 		switch (field) {
@@ -96,10 +89,9 @@ public class Entry {
 		}
 		throw new IllegalArgumentException("Invalid field.");
 	}
-
+	
 	/**
-	 * Set the value for a field. Fields must be enabled via the web in the
-	 * Channel's settings.
+	 * Set the value for a field. Fields must be enabled via the web in the Channel's settings.
 	 * 
 	 * @param field
 	 *            1-8.
@@ -143,19 +135,17 @@ public class Entry {
 		}
 		throw new IllegalArgumentException("Invalid field.");
 	}
-
+	
 	/**
 	 * Get latitude.
 	 * 
-	 * @return Latitude, in decimal degrees; 0.0 if undefined; null for status
-	 *         feeds or if location info was not requested using
-	 *         {@link FeedParameters#location(java.lang.Boolean) }.
-	 * 
+	 * @return Latitude, in decimal degrees; 0.0 if undefined; null for status feeds or if location info was not
+	 *         requested using {@link FeedParameters#location(java.lang.Boolean) }.
 	 */
 	public Double getLatitude() {
 		return latitude;
 	}
-
+	
 	/**
 	 * Set latitude.
 	 * 
@@ -166,18 +156,17 @@ public class Entry {
 		this.latitude = latitude;
 		updateMap.put("lat", latitude);
 	}
-
+	
 	/**
 	 * Get longitude.
 	 * 
-	 * @return Longitude, in decimal degrees; 0.0 if undefined; null for status
-	 *         feeds or if location info was not requested using
-	 *         {@link FeedParameters#location(java.lang.Boolean) }.
+	 * @return Longitude, in decimal degrees; 0.0 if undefined; null for status feeds or if location info was not
+	 *         requested using {@link FeedParameters#location(java.lang.Boolean) }.
 	 */
 	public Double getLongitude() {
 		return longitude;
 	}
-
+	
 	/**
 	 * Set longitude.
 	 * 
@@ -188,18 +177,17 @@ public class Entry {
 		this.longitude = longitude;
 		updateMap.put("long", longitude);
 	}
-
+	
 	/**
 	 * Get elevation.
 	 * 
-	 * @return Elevation, in meters; 0.0 if undefined; null for status feeds or
-	 *         if location info was not requested using
+	 * @return Elevation, in meters; 0.0 if undefined; null for status feeds or if location info was not requested using
 	 *         {@link FeedParameters#location}.
 	 */
 	public Double getElevation() {
 		return elevation;
 	}
-
+	
 	/**
 	 * Set elevation.
 	 * 
@@ -210,18 +198,17 @@ public class Entry {
 		this.elevation = elevation;
 		updateMap.put("elevation", elevation);
 	}
-
+	
 	/**
 	 * Get status.
 	 * 
-	 * @return Status string; null for Channel and Field feeds if status info
-	 *         was not requested using
+	 * @return Status string; null for Channel and Field feeds if status info was not requested using
 	 *         {@link FeedParameters#status(java.lang.Boolean)}
 	 */
 	public String getStatus() {
 		return status;
 	}
-
+	
 	/**
 	 * Set status.
 	 * 
@@ -232,10 +219,9 @@ public class Entry {
 		this.status = status;
 		updateMap.put("status", status);
 	}
-
+	
 	/**
-	 * Set Twitter username. If set, a tweet will be posted to the user's
-	 * twitter feed for each channel update.
+	 * Set Twitter username. If set, a tweet will be posted to the user's twitter feed for each channel update.
 	 * 
 	 * @param twitter
 	 *            Twitter username.
@@ -244,10 +230,9 @@ public class Entry {
 		this.twitter = twitter;
 		updateMap.put("twitter", twitter);
 	}
-
+	
 	/**
-	 * Set Twitter message. This message will be posted to the user's twitter
-	 * feed for each channel update.
+	 * Set Twitter message. This message will be posted to the user's twitter feed for each channel update.
 	 * 
 	 * @param tweet
 	 *            Twitter message.
@@ -256,17 +241,17 @@ public class Entry {
 		this.tweet = tweet;
 		updateMap.put("tweet", tweet);
 	}
-
+	
 	/**
-	 * Get date on which this channel entry was created. Use
-	 * {@link FeedParameters#offset(java.lang.Integer)} to adjust timezones.
+	 * Get date on which this channel entry was created. Use {@link FeedParameters#offset(java.lang.Integer)} to adjust
+	 * timezones.
 	 * 
 	 * @return Date.
 	 */
 	public Date getCreated() {
 		return created_at;
 	}
-
+	
 	/**
 	 * Get the ID of this entry.
 	 * 

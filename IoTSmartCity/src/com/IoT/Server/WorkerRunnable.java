@@ -16,32 +16,40 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 
-public class WorkerRunnable implements Runnable, HttpServer {
+import com.IoT.Arduino.sensors.Acknowledge;
+import com.IoT.Arduino.sensors.DataDht11;
+import com.IoT.Arduino.sensors.Sensors;
 
+public class WorkerRunnable implements Runnable, HttpServer {
+	
+	private Sensors serial;
+	private DataDht11 monitor;
+	private Acknowledge ack;
 	protected Socket clientSocket = null;
 	protected String serverText = null;
 	protected Map<String, String> paramMap = null;
-
-	public WorkerRunnable(Socket clientSocket, String serverText) {
+	
+	public WorkerRunnable(Socket clientSocket, Sensors sensor, String serverText, DataDht11 monitor, Acknowledge ack) {
 		this.clientSocket = clientSocket;
 		this.serverText = serverText;
+		this.serial = sensor;
+		this.monitor = monitor;
+		this.ack = ack;
 	}
-
+	
 	public void run() {
 		try {
 			paramMap = parse(clientSocket.getInputStream());
-
-			if (paramMap.isEmpty())
-				response(clientSocket.getOutputStream());
-			else
-				response(clientSocket.getOutputStream(), paramMap);
-
+			
+			if (paramMap.isEmpty()) response(clientSocket.getOutputStream());
+			else response(clientSocket.getOutputStream(), paramMap);
+			
 		} catch (IOException e) {
 			// report exception somewhere.
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	public Map<String, String> parse(InputStream is) throws IOException {
 		Map<String, String> paramMap = new HashMap<String, String>();
@@ -50,7 +58,7 @@ public class WorkerRunnable implements Runnable, HttpServer {
 		String method = null;
 		String httpVersion = null;
 		String uri = null;
-
+		
 		// read request line
 		inputLine = lr.readLine();
 		String[] requestCols = inputLine.split("\\s");
@@ -58,12 +66,12 @@ public class WorkerRunnable implements Runnable, HttpServer {
 		uri = requestCols[1];
 		httpVersion = requestCols[2];
 		System.out.println("http version:\t" + httpVersion);
-
+		
 		// read header
 		while (StringUtils.isNotBlank(inputLine = lr.readLine())) {
 			System.out.println("post header line:\t" + inputLine);
 		}
-
+		
 		// parse GET param
 		if (uri.contains("?")) {
 			paramMap.putAll(parseParam(uri.split("\\?", 2)[1], false));
@@ -82,12 +90,12 @@ public class WorkerRunnable implements Runnable, HttpServer {
 		}
 		return paramMap;
 	}
-
+	
 	@Override
 	public Map<String, String> parseParam(String paramStr, boolean isBody) {
 		String[] paramPairs = paramStr.trim().split("&");
 		Map<String, String> paramMap = new HashMap<String, String>();
-
+		
 		String[] paramKv;
 		for (String paramPair : paramPairs) {
 			if (paramPair.contains("=")) {
@@ -102,40 +110,76 @@ public class WorkerRunnable implements Runnable, HttpServer {
 		}
 		return paramMap;
 	}
-
+	
 	@Override
 	public void response(OutputStream out, Map<String, String> paramMap) {
 		sendData(paramMap);
 	}
-
-	private void sendData(Map<String, String> paramMap) {
-		if (!paramMap.get("id").isEmpty()) {
-			System.out.println("primo parametro --> " + paramMap.get("id"));
-
-			JSONObject obj = new JSONObject();
-
-			obj.put("temperature", 28);
-			obj.put("humidity", 30);
-			obj.put("flipSwitch", "on");
-
-			System.out.print(obj);
-			try {
-			PrintStream send = new PrintStream(clientSocket.getOutputStream());
+	
+	@SuppressWarnings("unchecked")
+	private synchronized void sendData(Map<String, String> paramMap) {
+		try {
 			
-			send.println("HTTP/1.1 200 OK");
-			send.println("Content-type: text/html; Charset=UTF-8;");
-			send.println("");
-			send.println(obj);
-			send.flush();
-			send.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (paramMap.containsKey("isOn") && paramMap.get("isOn").equals("getData")) {
+				
+				System.out.println("parametro" + paramMap.get("isOn"));
+				
+				JSONObject obj = new JSONObject();
+				
+				obj.put("temperature", monitor.getTemperature());
+				obj.put("humidity", monitor.getHumidity());
+				
+				// Check if the climax is on.
+				ack.writeData(serial, "isOn");
+				// Have to wait until it received the replay from the Arduino
+				
+				// System.out.println("Is on =====>>>>> " + ack.getIsOn());
+				if (!ack.getIsOn()) {
+					obj.put("flipSwitch", "off");
+				} else {
+					obj.put("flipSwitch", "on");
+					// if climax is on, then I ask the last temperature
+					
+					ack.writeData(serial, "temperature");
+					obj.put("slider", ack.getTemperature());
+					
+				}
+				
+				System.out.print(obj);
+				try {
+					PrintStream send = new PrintStream(clientSocket.getOutputStream());
+					
+					send.println("HTTP/1.1 200 OK");
+					send.println("Content-type: text/html; Charset=UTF-8;");
+					send.println("");
+					send.println(obj);
+					send.flush();
+					send.close();
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else if (paramMap.containsKey("temperature")) {
+				System.out.println("temperature: " + paramMap.get("temperature"));
+				ack.writeData(serial, paramMap.get("temperature"));
+				//serial.writeData(paramMap.get("temperature"));
+				
+				//devo inviare l'ok, guarda il try catch sopra...
+				
+				System.out.println("write data: " + ack.getTemperature());
+				
+			} else if (paramMap.containsKey("setIsOn")) {
+				System.out.println("isOn: " + paramMap.get("setIsOn"));
+				ack.writeData(serial, paramMap.get("setIsOn"));
+
+				System.out.println("write data: " + ack.getIsOn());
+				
 			}
+		} catch (Exception e) {
+			System.out.println("Some problem in paramMap: " + e);
 		}
 	}
-
-
+	
 	@Override
 	public void response(OutputStream out) {
 		System.out.println("localhost");
@@ -143,7 +187,7 @@ public class WorkerRunnable implements Runnable, HttpServer {
 		String mimeType = getMimeType(file);
 		sendFile(file, mimeType);
 	}
-
+	
 	/* Sends the requested file to the client */
 	public void sendFile(File file, String fileType) {
 		try {
@@ -153,7 +197,7 @@ public class WorkerRunnable implements Runnable, HttpServer {
 			FileInputStream fileIn = new FileInputStream(file.toString());
 			byte[] bytes = new byte[1024];
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
+			
 			/* Write until bytes is empty */
 			while ((length = fileIn.read(bytes)) != -1) {
 				bos.write(bytes, 0, length);
@@ -163,24 +207,24 @@ public class WorkerRunnable implements Runnable, HttpServer {
 			bos.flush();
 			bos.close();
 			byte[] data1 = bos.toByteArray();
-
+			
 			String dataStr = new String(data1, "UTF-8");
-
+			
 			// System.out.print(dataStr);
 			send.println("HTTP/1.1 200 OK");
 			send.println("Content-type: " + fileType + "; Charset=UTF-8");
 			send.println("");
 			send.println(dataStr);
-
+			
 			send.flush();
 			send.close();
-
+			
 			fileIn.close();
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	
 	/* Finds out the MIME type of the requested file */
 	public String getMimeType(File f) {
 		String file = f.toString();
@@ -207,5 +251,10 @@ public class WorkerRunnable implements Runnable, HttpServer {
 			type = "video/mp4";
 		}
 		return type;
+	}
+	
+	@Override
+	public void terminate() throws IOException {
+		clientSocket.close();
 	}
 }

@@ -3,7 +3,7 @@ package com.IoT.Utils;
 import java.util.Random;
 
 public class GetRandomDouble {
-
+	
 	/***
 	 * Return random number between range max-min
 	 * 
@@ -17,5 +17,5 @@ public class GetRandomDouble {
 		double rand = new Random().nextDouble();
 		return min + (rand * (max - min));
 	}
-
+	
 }

@@ -29,11 +29,10 @@ import com.mashape.unirest.request.GetRequest;
 import java.util.HashMap;
 
 /**
- * Thingspeak Channel. Methods for updating and requesting feeds and entries
- * from Thingspeak channels.
+ * Thingspeak Channel. Methods for updating and requesting feeds and entries from Thingspeak channels.
  */
 public class Channel {
-
+	
 	// TODO: the API url should be configurable so the client can be used with
 	// self-hosted servers.
 	private String APIURL = "http://184.106.153.149";
@@ -43,12 +42,10 @@ public class Channel {
 	private String writeAPIKey;
 	private final Boolean isPublic;
 	private final HashMap<String, Object> fields = new HashMap<>();
-	private final Gson gson = new GsonBuilder().setDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ssXXX").create();
-
+	private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
+	
 	/**
-	 * Constructor for a public, read-only, Thingspeak channel. This type of
-	 * channel cannot be updated.
+	 * Constructor for a public, read-only, Thingspeak channel. This type of channel cannot be updated.
 	 *
 	 * @param channelId
 	 *            Channel Id.
@@ -57,33 +54,30 @@ public class Channel {
 		this.isPublic = true;
 		this.channelId = channelId;
 	}
-
+	
 	/**
 	 * Constructor for a public, writeable, Thingspeak channel.
 	 *
 	 * @param channelId
 	 *            Channel Id.
 	 * @param writeKey
-	 *            API Key for the channel. See
-	 *            https://thingspeak.com/channels/<channelId>#apikeys
+	 *            API Key for the channel. See https://thingspeak.com/channels/<channelId>#apikeys
 	 */
 	public Channel(Integer channelId, String writeKey) {
 		this.isPublic = true;
 		this.channelId = channelId;
 		this.writeAPIKey = writeKey;
 	}
-
+	
 	/**
 	 * Constructor for a private, writeable, Thingspeak channel.
 	 *
 	 * @param channelId
 	 *            Channel Id.
 	 * @param writeKey
-	 *            Write API Key. See
-	 *            https://thingspeak.com/channels/<channelId>#apikeys.
+	 *            Write API Key. See https://thingspeak.com/channels/<channelId>#apikeys.
 	 * @param readKey
-	 *            Read API Key. See
-	 *            https://thingspeak.com/channels/<channelId>#apikeys.
+	 *            Read API Key. See https://thingspeak.com/channels/<channelId>#apikeys.
 	 */
 	public Channel(Integer channelId, String writeKey, String readKey) {
 		this.channelId = channelId;
@@ -91,10 +85,9 @@ public class Channel {
 		this.writeAPIKey = writeKey;
 		this.isPublic = false;
 	}
-
+	
 	/**
-	 * Make GET requests to the Thingspeak API without additional feed
-	 * parameters.
+	 * Make GET requests to the Thingspeak API without additional feed parameters.
 	 *
 	 * @param url
 	 *            The API url.
@@ -104,20 +97,16 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	private String thingRequest(String url) throws UnirestException,
-			ThingSpeakException {
+	private String thingRequest(String url) throws UnirestException, ThingSpeakException {
 		GetRequest request = Unirest.get(url);
 		if (!this.isPublic) {
 			request.field("key", this.readAPIKey);
 		}
 		HttpResponse<JsonNode> response = request.asJson();
-		if (response.getCode() != 200) {
-			throw new ThingSpeakException("Request failed with code "
-					+ response.getCode());
-		}
+		if (response.getCode() != 200) { throw new ThingSpeakException("Request failed with code " + response.getCode()); }
 		return response.getBody().toString();
 	}
-
+	
 	/**
 	 * Make GET requests to the Thingspeak API with additional feed parameters.
 	 *
@@ -131,25 +120,20 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	private String thingRequest(String url, FeedParameters options)
-			throws UnirestException, ThingSpeakException {
+	private String thingRequest(String url, FeedParameters options) throws UnirestException, ThingSpeakException {
 		GetRequest request = Unirest.get(url);
 		if (!this.isPublic) {
 			request.field("key", this.readAPIKey);
 		}
 		request.fields(options.fields);
 		HttpResponse<JsonNode> response = request.asJson();
-		if (response.getCode() != 200) {
-			throw new ThingSpeakException("Request failed with code "
-					+ response.getCode());
-		}
+		if (response.getCode() != 200) { throw new ThingSpeakException("Request failed with code " + response.getCode()); }
 		return response.getBody().toString();
 	}
-
+	
 	/**
-	 * Use a server other than thingspeak.com. If you are hosting your own
-	 * Thingspeak server, set the url of the server here. The url of the public
-	 * Thingspeak server is http://api.thingspeak.com
+	 * Use a server other than thingspeak.com. If you are hosting your own Thingspeak server, set the url of the server
+	 * here. The url of the public Thingspeak server is http://api.thingspeak.com
 	 *
 	 * @param url
 	 *            eg. http://localhost, http://thingspeak.local:3000, etc.
@@ -157,7 +141,7 @@ public class Channel {
 	public void setUrl(String url) {
 		this.APIURL = url;
 	}
-
+	
 	/**
 	 * Update channel with new data.
 	 *
@@ -169,25 +153,18 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public synchronized Integer update(Entry entry) throws UnirestException,
-			ThingSpeakException {
-		HttpResponse<String> response = Unirest.post(APIURL + "/update")
-				.header(APIHEADER, this.writeAPIKey)
-				.header("Connection", "close").fields(entry.getUpdateMap())
-				.asString();
+	public synchronized Integer update(Entry entry) throws UnirestException, ThingSpeakException {
+		HttpResponse<String> response = Unirest.post(APIURL + "/update").header(APIHEADER, this.writeAPIKey)
+				.header("Connection", "close").fields(entry.getUpdateMap()).asString();
 		if (response.getCode() != 200) {
-			throw new ThingSpeakException("Request failed with code "
-					+ response.getCode());
-		} else if (response.getBody().equals("0")) {
-			throw new ThingSpeakException("Update failed.");
-		}
+			throw new ThingSpeakException("Request failed with code " + response.getCode());
+		} else if (response.getBody().equals("0")) { throw new ThingSpeakException("Update failed."); }
 		return Integer.parseInt(response.getBody());
 	}
-
+	
 	/**
-	 * Get a channel feed with default feed options. Does not include location
-	 * or status info. Only fields that have been named in the channel's
-	 * settings (via the web) will be returned.
+	 * Get a channel feed with default feed options. Does not include location or status info. Only fields that have
+	 * been named in the channel's settings (via the web) will be returned.
 	 *
 	 * @return Feed for this channel.
 	 * @throws UnirestException
@@ -199,10 +176,10 @@ public class Channel {
 		String url = APIURL + "/channels/" + this.channelId + "/feed.json";
 		return gson.fromJson(thingRequest(url), Feed.class);
 	}
-
+	
 	/**
-	 * Get a channel feed with additional feed options. Only fields that have
-	 * been named in the channel's settings (via the web) will be returned.
+	 * Get a channel feed with additional feed options. Only fields that have been named in the channel's settings (via
+	 * the web) will be returned.
 	 *
 	 * @param options
 	 *            Additional feed parameters.
@@ -212,16 +189,14 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public Feed getChannelFeed(FeedParameters options) throws UnirestException,
-			ThingSpeakException {
+	public Feed getChannelFeed(FeedParameters options) throws UnirestException, ThingSpeakException {
 		String url = APIURL + "/channels/" + this.channelId + "/feed.json";
 		return gson.fromJson(thingRequest(url, options), Feed.class);
 	}
-
+	
 	/**
-	 * Get last entry in this channel with default feed options. This is a
-	 * faster alternative to getting a Channel Feed and then calling
-	 * {@link Feed#getChannelLastEntry()}.
+	 * Get last entry in this channel with default feed options. This is a faster alternative to getting a Channel Feed
+	 * and then calling {@link Feed#getChannelLastEntry()}.
 	 *
 	 * @return Entry.
 	 * @throws UnirestException
@@ -229,16 +204,14 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public Entry getLastChannelEntry() throws UnirestException,
-			ThingSpeakException {
+	public Entry getLastChannelEntry() throws UnirestException, ThingSpeakException {
 		String url = APIURL + "/channels/" + this.channelId + "/feed/last.json";
 		return gson.fromJson(thingRequest(url), Entry.class);
 	}
-
+	
 	/**
-	 * Get last entry in this channel with additional feed options. This is a
-	 * faster alternative to getting a Channel Feed and then calling
-	 * {@link Feed#getChannelLastEntry()}
+	 * Get last entry in this channel with additional feed options. This is a faster alternative to getting a Channel
+	 * Feed and then calling {@link Feed#getChannelLastEntry()}
 	 *
 	 * @param options
 	 * @return Entry.
@@ -247,12 +220,11 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public Entry getLastChannelEntry(FeedParameters options)
-			throws UnirestException, ThingSpeakException {
+	public Entry getLastChannelEntry(FeedParameters options) throws UnirestException, ThingSpeakException {
 		String url = APIURL + "/channels/" + this.channelId + "/feed/last.json";
 		return gson.fromJson(thingRequest(url, options), Entry.class);
 	}
-
+	
 	/**
 	 * Get a field feed with default feed options.
 	 *
@@ -264,13 +236,11 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public Feed getFieldFeed(Integer fieldId) throws UnirestException,
-			ThingSpeakException {
-		String url = APIURL + "/channels/" + this.channelId + "/field/"
-				+ fieldId + ".json";
+	public Feed getFieldFeed(Integer fieldId) throws UnirestException, ThingSpeakException {
+		String url = APIURL + "/channels/" + this.channelId + "/field/" + fieldId + ".json";
 		return gson.fromJson(thingRequest(url), Feed.class);
 	}
-
+	
 	/**
 	 * Get a field feed with additional feed options.
 	 *
@@ -284,13 +254,11 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public Feed getFieldFeed(Integer fieldId, FeedParameters options)
-			throws UnirestException, ThingSpeakException {
-		String url = APIURL + "/channels/" + this.channelId + "/field/"
-				+ fieldId + ".json";
+	public Feed getFieldFeed(Integer fieldId, FeedParameters options) throws UnirestException, ThingSpeakException {
+		String url = APIURL + "/channels/" + this.channelId + "/field/" + fieldId + ".json";
 		return gson.fromJson(thingRequest(url, options), Feed.class);
 	}
-
+	
 	/**
 	 * Get the last entry in a field feed with default feed options.
 	 *
@@ -302,13 +270,11 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public Entry getLastFieldEntry(Integer fieldId) throws UnirestException,
-			ThingSpeakException {
-		String url = APIURL + "/channels/" + this.channelId + "/field/"
-				+ fieldId + "/last.json";
+	public Entry getLastFieldEntry(Integer fieldId) throws UnirestException, ThingSpeakException {
+		String url = APIURL + "/channels/" + this.channelId + "/field/" + fieldId + "/last.json";
 		return gson.fromJson(thingRequest(url), Entry.class);
 	}
-
+	
 	/**
 	 * Get the last entry in a field feed with additional feed options.
 	 *
@@ -322,13 +288,12 @@ public class Channel {
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public Entry getLastFieldEntry(Integer fieldId, FeedParameters options)
-			throws UnirestException, ThingSpeakException {
-		String url = APIURL + "/channels/" + this.channelId + "/field/"
-				+ fieldId + "/last.json";
+	public Entry getLastFieldEntry(Integer fieldId, FeedParameters options) throws UnirestException,
+			ThingSpeakException {
+		String url = APIURL + "/channels/" + this.channelId + "/field/" + fieldId + "/last.json";
 		return gson.fromJson(thingRequest(url, options), Entry.class);
 	}
-
+	
 	/**
 	 * Get channel status updates. Uses the default feed options.
 	 *
@@ -342,32 +307,30 @@ public class Channel {
 		String url = APIURL + "/channels/" + this.channelId + "/status.json";
 		return gson.fromJson(thingRequest(url), Feed.class);
 	}
-
+	
 	/**
 	 * Get channel status updates.
 	 *
 	 * @param options
-	 *            Only {@link FeedParameters#offset(java.lang.Integer)} is
-	 *            supported.
+	 *            Only {@link FeedParameters#offset(java.lang.Integer)} is supported.
 	 * @return Status feed.
 	 * @throws UnirestException
 	 *             The request cannot be made.
 	 * @throws ThingSpeakException
 	 *             The request is invalid.
 	 */
-	public Feed getStatusFeed(FeedParameters options) throws UnirestException,
-			ThingSpeakException {
+	public Feed getStatusFeed(FeedParameters options) throws UnirestException, ThingSpeakException {
 		String url = APIURL + "/channels/" + this.channelId + "/status.json";
 		return gson.fromJson(thingRequest(url, options), Feed.class);
 	}
-
+	
 	/**
 	 * Not implemented.
 	 */
 	public void getUserInfo() {
 		throw new UnsupportedOperationException("Not implemented.");
 	}
-
+	
 	/**
 	 * Not implemented.
 	 */

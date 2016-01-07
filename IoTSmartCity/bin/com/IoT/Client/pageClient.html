@@ -6,60 +6,198 @@
 <!-- Include meta tag to ensure proper rendering and touch zooming -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Include jQuery Mobile stylesheets -->
-<link rel="stylesheet"
-	href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
 <!-- Include the jQuery library -->
 <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 <!-- Include the jQuery Mobile library -->
-<script
-	src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-<script
-	src="https://raw.github.com/aterrien/jQuery-Knob/master/js/jquery.knob.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://raw.github.com/aterrien/jQuery-Knob/master/js/jquery.knob.js"></script>
 <script type="text/javascript">
-	$.ajax({
-		type : 'POST',
-		url : 'http://localhost:1111',
+	var loc = $(location).attr('href');
+	console.log(loc);
 
-		data : {
-			id : '123'
-		},
+	//$('.knob').val(value1).trigger('change');
 
-		dataType : 'json',
+	//When the page is started, then it builds the tab container for sensors (temperature/humidity) and data (thingspeak.com).
+	$(document).on('pagecontainershow', function() {
+		getData();
+		pageId = $('body').pagecontainer('getActivePage').prop('id');
 
-		success : function(data) {
-			//console.log("success");
-
-			$.each(data, function(k, v) {
-				$("#" + k).val(v);
-				//document.getElementById(k).value = v;
-				$("input.knob").trigger('change');
-				console.log(k + " : " + v);
-				if (k == "temperature") {
-					$("#slider").val(v).slider("refresh");
-
-				}
-				if(k == "flipSwitch") {
-					$("#" + k).val(v).slider('refresh');
-				}
-				
-			});
-		},
-
-		error : function(xhr, status, errorThrown) {
-			alert("Sorry, there was a problem!");
-			console.log("Error: " + errorThrown);
-			console.log("Status: " + status);
-			console.dir(xhr);
-		},
-
-		// Code to run regardless of success or failure
-		complete : function(xhr, status) {
-			console.log("The request is complete!");
+		if (pageId === 'index') {
+			setTimeout(function() {
+				$(".header").tabs("option", "active", 1);
+			}, 1000);
 		}
-
 	});
 
+	//every 15 seconds the page reload the data from the server
+	/*$(document).ready(function() {
+		setInterval(function() {
+			getData();
+		}, 15000);
+	});*/
+
+	/*
+	 * Get the first request, to populate the fields:
+		- temperature
+		- humidity
+		- on/off
+		- slice temperature
+	 */
+	function getData() {
+		$.ajax({
+			type : 'POST',
+			//http://172.20.10.3:1111
+			url : loc,
+
+			data : {
+				isOn : 'getData'
+			},
+
+			dataType : 'json',
+			//{"slider":23.0,"flipSwitch":"on","temperature":20.0,"humidity":36.0}
+			success : function(data) {
+				//console.log("success");
+
+				$.each(data, function(k, v) {
+					$("#" + k).val(v);
+					$("input.knob").trigger('change');
+					console.log(k + " : " + v);
+					if (k == "slider") {
+						$("#" + k).val(v).slider("refresh");
+
+					}
+					if (k == "flipSwitch") {
+						if (v == 'off') {
+							console.log("off...");
+							$("#" + k).val(v).slider('refresh');
+							$("#slider").slider("option", "disabled", true);
+						}
+						if (v == 'on') {
+							console.log("on...");
+							$("#" + k).val(v).slider('refresh');
+							$("#" + k).slider("option", "disabled", false);
+
+						}
+					}
+				});
+			},
+
+			error : function(xhr, status, errorThrown) {
+				//alert("Sorry, there was a problem!");
+				console.log("Error: " + errorThrown);
+				console.log("Status: " + status);
+				console.dir(xhr);
+			},
+
+			// Code to run regardless of success or failure
+			complete : function(xhr, status) {
+				console.log("The request is complete!");
+			}
+
+		});
+	}
+
+	/*
+	 *	Send the temperature to the server, and wait a callback function
+	 *
+	 */
+	function getTemperatureToSlice() {
+		$("#slider").on('slidestop', function(event) {
+			var slider_value = $("#slider").slider().val();
+			console.log('Value: ' + slider_value);
+			/*
+			 * Get the first request, to populate the fields:
+				- temperature
+				- humidity
+				- on/off
+				- slice temperature
+			 */
+			$.ajax({
+				type : 'POST',
+				url : loc,
+
+				data : {
+					temperature : slider_value
+				},
+				cache : false,
+				dataType : 'json',
+
+				success : function(data) {
+					console.log("Send data -temperature- successed!");
+
+				},
+
+				error : function(xhr, status, errorThrown) {
+					//alert("Sorry, there was a problem!");
+					console.log("Error: " + errorThrown);
+					console.log("Status: " + status);
+					console.dir(xhr);
+				},
+
+				// Code to run regardless of success or failure
+				complete : function(xhr, status) {
+					console.log("The request is complete!");
+				}
+
+			});
+		});
+
+	}
+
+	function sendSetIsOn(isOn) {
+		console.log("flip switch changed!");
+		$.ajax({
+			type : 'POST',
+			url : loc,
+
+			data : {
+				setIsOn : isOn
+			},
+			cache : false,
+			dataType : 'json',
+
+			success : function(data) {
+				console.log("Send data -isOn- successed!");
+
+			},
+
+			error : function(xhr, status, errorThrown) {
+				//alert("Sorry, there was a problem!");
+				console.log("Error: " + errorThrown);
+				console.log("Status: " + status);
+				console.dir(xhr);
+			},
+
+			// Code to run regardless of success or failure
+			complete : function(xhr, status) {
+				console.log("The request is complete!");
+			}
+
+		});
+	}
+
 	$(function($) {
+		/*
+		 *	Send the temperature to the server, and wait a callback function
+		 *
+		 */
+
+		getTemperatureToSlice();
+
+		$("#flipSwitch").on("change", function() {
+			//console.log("flip switch changed!");
+			console.log($("#flipSwitch").val());
+			var isOn = $("#flipSwitch").val();
+			if ($("#flipSwitch").val() == "on") {
+				$("#slider").slider("option", "disabled", false);
+			} else {
+				$("#slider").slider("option", "disabled", true);
+			}
+			sendSetIsOn(isOn);
+
+		});
+
 		$(".knob").knob(
 				{
 					change : function(value) {
@@ -92,24 +230,20 @@
 								pa = this.arc(this.v);
 								this.g.beginPath();
 								this.g.strokeStyle = this.pColor;
-								this.g.arc(this.xy, this.xy, this.radius
-										- this.lineWidth, pa.s, pa.e, pa.d);
+								this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, pa.s, pa.e, pa.d);
 								this.g.stroke();
 							}
 
 							this.g.beginPath();
-							this.g.strokeStyle = r ? this.o.fgColor
-									: this.fgColor;
-							this.g.arc(this.xy, this.xy, this.radius
-									- this.lineWidth, a.s, a.e, a.d);
+							this.g.strokeStyle = r ? this.o.fgColor : this.fgColor;
+							this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, a.s, a.e, a.d);
 							this.g.stroke();
 
 							this.g.lineWidth = 2;
 							this.g.beginPath();
 							this.g.strokeStyle = this.o.fgColor;
-							this.g.arc(this.xy, this.xy, this.radius
-									- this.lineWidth + 1 + this.lineWidth * 2
-									/ 3, 0, 2 * Math.PI, false);
+							this.g.arc(this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0,
+									2 * Math.PI, false);
 							this.g.stroke();
 
 							return false;
@@ -121,55 +255,72 @@
 
 </head>
 <body>
-	<div data-role="page">
-		<div data-role="header" style="overflow: hidden;">
-			<h1>Smart Control Home</h1>
+
+
+
+
+	<div data-role="page" id="index">
+
+		<div data-role="tabs" class="tabs">
+			<div data-role="header" style="overflow: hidden;" data-theme="a">
+				<h1>Smart Control Home</h1>
+
+				<!-- /navbar -->
+			</div>
 			<div data-role="navbar">
 				<ul>
-					<li><a href="#" class="ui-btn-active">Home</a></li>
-					<li><a href="#">Data</a></li>
+					<li><a href="#one" class="ui-btn-active" data-theme="a">Home</a></li>
+					<li><a href="#two" data-theme="a">Data</a></li>
+
 				</ul>
 			</div>
-			<!-- /navbar -->
-		</div>
-		<div data-role="main" class="ui-content">
-			<div id="content" style="aligh: center;">
-				<!-- <div id="divTest" tabindex="1">Suggestions:</div> -->
+			<div id="one" class="ui-content" style="padding: inherit;">
+				<div data-role="content" class="ui-content" style="padding: inherit;">
+					<div id="content" style="aligh: center;">
+						<!-- <div id="divTest" tabindex="1">Suggestions:</div> -->
 
-				<div class="demo"
-					style="width: 50%; height: 250px; text-align: center; float: left;">
-					<p>Temperature</p>
-					<input id="temperature"
-						style="display: inline; width: 200px; height: 200px;" class="knob"
-						data-angleOffset=-125 data-angleArc=250 data-fgColor="#2972C1"
-						data-rotation="clockwise" value="0" readonly="readonly">
+						<div class="demo" style="width: 50%; height: 50%; text-align: center; float: left;">
+							<p>Temperature</p>
+							<input id="temperature" style="display: inline;" data-width="90%" class="knob" data-angleOffset=-125
+								data-angleArc=250 data-fgColor="#2972C1" data-rotation="clockwise" value="0" readonly="readonly">
+						</div>
+
+						<div class="demo" style="width: 50%; height: 50%; text-align: center; float: right;">
+							<p>Humidity</p>
+							<input id="humidity" style="display: inline;" data-width="90%" class="knob" data-angleOffset=-125
+								data-angleArc=250 data-fgColor="#2972C1" data-rotation="clockwise" value="0" readonly="readonly">
+
+						</div>
+						<br style="clear: both;" />
+					</div>
+					<br> <label for="flipSwitch">Flip switch:</label> <select name="flipSwitch" id="flipSwitch" data-role="slider">
+						    
+						<option value="off">Off</option>     
+						<option value="on">On</option>
+					</select> <label for="points">Set Temperature:</label> <input type="range" name="slider" id="slider" data-highlight="true"
+						min="18" max="29" value="22" readonly="readonly" />
+
 				</div>
-
-				<div class="demo"
-					style="width: 50%; height: 250px; text-align: center; float: right;">
-					<p>Humidity</p>
-					<input id="humidity"
-						style="display: inline; width: 200px; height: 200px;" class="knob"
-						data-angleOffset=-125 data-angleArc=250 data-fgColor="#2972C1"
-						data-rotation="clockwise" value="0" readonly="readonly">
-
-				</div>
-				<br style="clear: both;" />
 			</div>
-			<br> <label for="flipSwitch">Flip switch:</label> 
-			<select
-				name="flipSwitch" id="flipSwitch" data-role="slider">     
-				<option value="off">Off</option>     
-				<option value="on">On</option>
-			</select> <label for="points">Set Temperature:</label> 
-			<input type="range"
-				name="slider" id="slider" data-highlight="true" min="18"
-				max="29" value="22" readonly="readonly" />
 
+
+			<div id="two" class="ui-content" align="center">
+
+				<iframe width="450" height="250" style="border: 1px solid #cccccc;"
+					src="https://api.thingspeak.com/channels/73899/charts/1?round=2&dynamic=true&title=Temperature&yaxis=Celsius%20degrees&days=3"></iframe>
+
+
+				<br>
+				<iframe width="450" height="250" style="border: 1px solid #cccccc;"
+					src="https://api.thingspeak.com/channels/73899/charts/2?round=2&dynamic=true&title=Humidity&yaxis=Per%20cent&days=3"></iframe>
+
+			</div>
 		</div>
-		<div data-role="footer">
+		<div data-role="footer" data-theme="a">
 			<h1>Control Clima Center</h1>
 		</div>
 	</div>
+
+
 </body>
 </html>

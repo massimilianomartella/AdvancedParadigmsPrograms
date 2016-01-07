@@ -23,13 +23,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * POJO to handle de-serialized JSON Public Channel data. Provides methods to
- * PublicIterator for accessing paging info.
+ * POJO to handle de-serialized JSON Public Channel data. Provides methods to PublicIterator for accessing paging info.
  * 
  * @author abythell
  */
 class PublicJSONResult {
-
+	
 	/**
 	 * This class must match the JSON returned by Thingspeak.
 	 */
@@ -38,13 +37,13 @@ class PublicJSONResult {
 		private Integer per_page;
 		private Integer total_entries;
 	}
-
+	
 	/**
 	 * These members must match the JSON returned by Thingspeak.
 	 */
 	private final Pagination pagination = new Pagination();
 	private final ArrayList<PublicChannel> channels = new ArrayList<>();
-
+	
 	/**
 	 * Get the current page represented by the data in channels.
 	 * 
@@ -53,7 +52,7 @@ class PublicJSONResult {
 	Integer getCurrentPage() {
 		return pagination.current_page;
 	}
-
+	
 	/**
 	 * Determine if the current page is the last one in the set.
 	 * 
@@ -63,22 +62,21 @@ class PublicJSONResult {
 		if (pagination.total_entries <= pagination.per_page) {
 			return true;
 		} else {
-			Double pages = (double) pagination.total_entries
-					/ pagination.per_page;
+			Double pages = (double) pagination.total_entries / pagination.per_page;
 			return (pages.intValue() == pagination.current_page);
 		}
 	}
-
+	
 	/**
-	 * Get the iterator for the channel data. Used by PublicIterator to access
-	 * the PublicChannel objects stored in the current page.
+	 * Get the iterator for the channel data. Used by PublicIterator to access the PublicChannel objects stored in the
+	 * current page.
 	 * 
 	 * @return
 	 */
 	Iterator<PublicChannel> iterator() {
 		return channels.iterator();
 	}
-
+	
 	/**
 	 * Get a total count of all public channels.
 	 * 
@@ -87,5 +85,5 @@ class PublicJSONResult {
 	Integer getTotalEntries() {
 		return pagination.total_entries;
 	}
-
+	
 }
