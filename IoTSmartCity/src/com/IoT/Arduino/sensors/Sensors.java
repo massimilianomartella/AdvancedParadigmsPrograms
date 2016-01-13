@@ -155,7 +155,7 @@ public class Sensors implements SerialPortEventListener {
 	@SuppressWarnings("rawtypes")
 	private void getData(Iterator iter) {
 		Map.Entry sensor = (Map.Entry) iter.next();
-		//System.out.println(sensor.getKey() + "=>" + sensor.getValue());
+		// System.out.println(sensor.getKey() + "=>" + sensor.getValue());
 		if (sensor.getKey().toString().equals("sensor") && sensor.getValue().toString().equals("DHT11")) {
 			Map.Entry value = (Map.Entry) iter.next();
 			

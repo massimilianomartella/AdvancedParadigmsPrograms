@@ -39,7 +39,5 @@ public class Acknowledge {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
-	
 }

@@ -162,16 +162,16 @@ public class WorkerRunnable implements Runnable, HttpServer {
 			} else if (paramMap.containsKey("temperature")) {
 				System.out.println("temperature: " + paramMap.get("temperature"));
 				ack.writeData(serial, paramMap.get("temperature"));
-				//serial.writeData(paramMap.get("temperature"));
+				// serial.writeData(paramMap.get("temperature"));
 				
-				//devo inviare l'ok, guarda il try catch sopra...
+				// devo inviare l'ok, guarda il try catch sopra...
 				
 				System.out.println("write data: " + ack.getTemperature());
 				
 			} else if (paramMap.containsKey("setIsOn")) {
 				System.out.println("isOn: " + paramMap.get("setIsOn"));
 				ack.writeData(serial, paramMap.get("setIsOn"));
-
+				
 				System.out.println("write data: " + ack.getIsOn());
 				
 			}
