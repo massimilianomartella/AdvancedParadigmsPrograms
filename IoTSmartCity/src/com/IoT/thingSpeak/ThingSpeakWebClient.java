@@ -38,7 +38,7 @@ public class ThingSpeakWebClient {
 	public static void main(String[] args) throws Exception {
 		
 		ThingSpeakWebClient ts = new ThingSpeakWebClient();
-		// ts.sendMsg(1, 28.9);
+		// Test send Msg
 		ts.sendMsg(1, 28.9, 2, 34.3);
 	}
 }

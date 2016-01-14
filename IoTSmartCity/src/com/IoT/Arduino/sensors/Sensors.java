@@ -36,27 +36,22 @@ public class Sensors implements SerialPortEventListener {
 			"/dev/ttyUSB0", // Linux
 			"COM3", // Windows
 	};
+	
 	/**
 	 * A BufferedReader which will be fed by a InputStreamReader converting the bytes into characters making the
 	 * displayed results codepage independent
 	 */
 	private BufferedReader input;
-	/** The output stream to the port */
-	private OutputStream output;
-	/** Milliseconds to block while waiting for port open */
-	private static final int TIME_OUT = 2000;
-	/** Default bits per second for COM port. */
-	private static final int DATA_RATE = 9600;
+	private OutputStream output;				/** The output stream to the port */
+	private static final int TIME_OUT = 2000;	/** Milliseconds to block while waiting for port open */
+	private static final int DATA_RATE = 9600;	/** Default bits per second for COM port. */
 	
 	public void initialize() {
-		// the next line is for Raspberry Pi and
-		// gets us into the while loop and was suggested here was suggested
+		// the next line is for Raspberry Pi and gets us into the while loop and was suggested here was suggested
 		// http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
 		System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/tty.usbmodem1411");
-		
 		CommPortIdentifier portId = null;
 		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-		
 		// First, Find an instance of serial port as set in PORT_NAMES.
 		while (portEnum.hasMoreElements()) {
 			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
@@ -71,20 +66,14 @@ public class Sensors implements SerialPortEventListener {
 			System.out.println("Could not find COM port.");
 			return;
 		}
-		
 		try {
 			// open serial port, and use class name for the appName.
 			serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
-			
 			// set port parameters
-			serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-					SerialPort.PARITY_NONE);
-			
+			serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 			// open the streams
 			input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-			
 			output = serialPort.getOutputStream();
-			
 			// add event listeners
 			serialPort.addEventListener(this);
 			serialPort.notifyOnDataAvailable(true);
